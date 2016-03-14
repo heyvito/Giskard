@@ -24,8 +24,12 @@ userSchema.methods.updateLastSeen = function() {
 };
 userSchema.ask = function() { throw new Error('Not Implemented.'); };
 userSchema.methods.setRole = function(role) {
-    this.roles.push(role);
-    return this.save();
+    if(this.roles.some(i => i.toLowerCase() === role.toLowerCase())) {
+        return Promise.resolve(this);
+    } else {
+        this.roles.push(role);
+        return this.save();
+    }
 };
 
 userSchema.statics.fromSlackData = function(objData) {
