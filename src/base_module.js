@@ -13,6 +13,7 @@ var bot = require('./bot').sharedInstance(),
 var BaseModule = function() {
     this.bot = bot;
     this.Context = Context;
+    this.logger = require('./utils/logger')(this._meta.moduleName);
 };
 
 BaseModule.prototype = {
