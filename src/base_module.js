@@ -1,6 +1,7 @@
 var bot = require('./bot').sharedInstance(),
     inherit = require('./utils/inherit'),
-    Context = require('./models/context');
+    Context = require('./models/context'),
+    rp = require('request-promise');
 
 /**
  * Represents the base module to every module
