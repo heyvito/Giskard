@@ -1,7 +1,9 @@
 var bot = require('./bot').sharedInstance(),
     inherit = require('./utils/inherit'),
     Context = require('./models/context'),
-    rp = require('request-promise');
+    rp = require('request-promise'),
+    _ = require('lodash'),
+    Cron = require('cron').CronJob;
 
 /**
  * Represents the base module to every module
@@ -53,6 +55,32 @@ BaseModule.prototype = {
     },
     searchUser: function(usernameOrId) {
         return bot.adapter.searchUser.apply(bot.adapter, arguments);
+    },
+    scheduleTask: function(givenSchedule) {
+        givenSchedule = givenSchedule || {};
+        var schedule = {
+            minute: '*',
+            hour: '*',
+            monthDay: '*',
+            month: '*',
+            dayOfWeek: '*'
+        };
+        if(typeof schedule === 'object') {
+            schedule = _.merge(schedule, givenSchedule);
+            schedule = Object.keys(schedule).map(k => schedule[k]).join(' ');
+        } else {
+            schedule = givenSchedule;
+        }
+
+        return new Promise((resolve, reject) => {
+            try {
+                var job = new Cron(schedule, resolve, null, true);
+            } catch(ex) {
+                this.logger.warning('Error processing Cron job: ');
+                this.logger.warning(ex);
+                reject(ex);
+            }
+        });
     }
 };
 
