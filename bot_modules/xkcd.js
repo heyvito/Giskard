@@ -19,7 +19,7 @@ var Xkcd = function(bot) {
                 var explanation = $('div#comic img').attr('title');
                 var src = $('div#comic img').attr('src');
                 if (src) {
-                    response.send(`**${title}**\n http:${src}\n`);
+                    response.send(`*${title}*\n http:${src}\n`);
                     response.send(`> ${explanation}`);
                 } else {
                     response.reply('Deu ruim, não achei essa tirinha');
