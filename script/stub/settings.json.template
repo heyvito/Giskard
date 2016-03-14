@@ -1,0 +1,6 @@
+{
+    "logLevel": "info",
+    "adapter": "shell",
+    "token": null,
+    "nicknames": []
+}
