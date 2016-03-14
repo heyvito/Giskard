@@ -1,9 +1,8 @@
 // $ Applause
 // $ Authors: victorgama
 // $ Created on: Mon Mar 14 15:21:41 BRT 2016
-// - Test: This is a sample command description that will be parsed
-// and shown to users when they request help. Make sure to document
-// every command your module provides.
+// - Aplauda|Palmas|Bravo: Envia um gif de aplausos
+// - Aplauda lentamente|Palmas lentas: Envia um gif de aplauso sarcástico
 
 var Base = require('../src/base_module');
 
