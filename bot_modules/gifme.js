@@ -20,7 +20,6 @@ var GifMe = function(bot) {
                 json: true
             })
             .then(d => {
-                console.log(d);
                 if(d.status !== 200) {
                     response.reply('Não consegui pesquisar o termo. Talvez a internet esteja quebrada. :stuck_out_tongue:');
                 } else {
