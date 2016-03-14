@@ -42,7 +42,7 @@ InputManager.prototype = {
             name = this.escapeRegex(bot.name),
             alias = bot.mentionMarks.map(m => this.escapeRegex(m)).join(aliasSeparator),
             newRegex = new RegExp(['^\\s*(?:', alias, aliasSeparator, name, '[:,]?)\\s*(?:', pattern, ')'].join(''), modifiers);
-        this.listeners.push(new MessageComparator(this, newRegex, callback));
+        this.listeners.push(new MessageComparator(newRegex, callback));
         return this;
     },
     registerInputHandler: function(regex, callback) {

@@ -4,7 +4,6 @@ var logger = require('../utils/logger')('MessageComparator'),
 /**
  * Represents a MessageComparator capable of determining whether an
  * incoming message must be relayed to a module or not.
- * @param {Bot}         bot         The current Bot instance
  * @param {RegExp}      regex       Regex to which every incoming
  *                                  message will be tested against
  * @param {Function}    callback    Callback function that will be called
@@ -12,8 +11,7 @@ var logger = require('../utils/logger')('MessageComparator'),
  *                                  provided regex
  * @constructor
  */
-var MessageComparator = function(bot, regex, callback) {
-    this.bot = bot;
+var MessageComparator = function(regex, callback) {
     this.regex = regex;
     this.callback = callback;
     logger.verbose('Registered message: ' + regex);
