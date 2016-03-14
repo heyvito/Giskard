@@ -32,6 +32,16 @@ userSchema.methods.setRole = function(role) {
     }
 };
 
+userSchema.methods.unsetRole = function(role) {
+    var normalisedRole = role.toLowerCase();
+    if(!this.roles.some(i => i.toLowerCase() === normalisedRole)) {
+        return Promise.resolve(this);
+    } else {
+        this.roles.splice(this.roles.map(i => i.toLowerCase()).indexOf(normalisedRole), 1);
+        return this.save();
+    }
+}
+
 userSchema.statics.fromSlackData = function(objData) {
 
     // jscs:disable
