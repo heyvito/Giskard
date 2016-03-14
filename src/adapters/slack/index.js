@@ -90,7 +90,7 @@ SlackAdapter.prototype = {
             return Promise.reject();
         } else {
             return new Promise((resolve) => {
-                this.rtm.sendMessage(id, string, function(d) {
+                this.rtm.sendMessage(string, id, function(d) {
                     resolve(d);
                 });
             });
