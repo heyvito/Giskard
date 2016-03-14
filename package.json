@@ -1,0 +1,25 @@
+{
+  "name": "giskard",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "bot",
+    "slack",
+    "extensible"
+  ],
+  "author": "Victor Gama <hey@vito.io> (http://vito.io)",
+  "license": "MIT",
+  "dependencies": {
+    "@slack/client": "https://github.com/slackhq/node-slack-client.git",
+    "bluebird": "^3.3.4",
+    "chalk": "^1.1.1",
+    "cline": "^0.8.2",
+    "mongodb": "^2.1.7",
+    "mongoose": "^4.4.7",
+    "npmlog": "^2.0.2"
+  }
+}

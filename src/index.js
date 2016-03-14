@@ -1,0 +1,1 @@
+require('./bot').sharedInstance().bootstrap();
