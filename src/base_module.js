@@ -43,6 +43,15 @@ BaseModule.prototype = {
     },
     ask: function() {
         return bot.contextManager.pushContext.apply(bot.contextManager, arguments);
+    },
+    http: function() {
+        return rp.apply(rp, arguments);
+    },
+    searchChannel: function() {
+        return bot.adapter.searchChannel.apply(bot.adapter, arguments);
+    },
+    searchUser: function(usernameOrId) {
+        return bot.adapter.searchUser.apply(bot.adapter, arguments);
     }
 };
 

@@ -76,41 +76,6 @@ BaseAdapter.prototype = {
         this.events.on(event, callback);
         return this;
     },
-
-    /**
-     * Performs a selector requested by a module using a given value
-     * @param  {String}       selector    Selector name to be executed
-     * @param  {AnyObject}    value       Value to be applied to the given selector
-     * @param  {Function}     resolve     Function to be executed when the selector is
-     *                                    successfully executed
-     * @param  {Function}     reject      Function to be executed when the selector could
-     *                                    not be executed
-     * @return {undefined}                Nothing.
-     */
-    performUserSelector: function(selector, value, resolve, reject) {
-        reject(new Error('The adapter in use has not implemented this selector.'));
-    },
-
-    /**
-     * Performs a selector requested by a module using a given value
-     * @param  {String}       selector    Selector name to be executed
-     * @param  {AnyObject}    value       Value to be applied to the given selector
-     * @param  {Function}     resolve     Function to be executed when the selector is
-     *                                    successfully executed
-     * @param  {Function}     reject      Function to be executed when the selector could
-     *                                    not be executed
-     * @return {undefined}                Nothing.
-     */
-    performChannelSelector: function(selector, value, resolve, reject) {
-        reject(new Error('The adapter in use has not implemented this selector.'));
-    },
-
-    /**
-     * Gets a string representing a mention to the giving {User}
-     * @param  {User}       user        User to be mentioned
-     * @return {String}                 String representing the mention tag for
-     *                                  the giving user
-     */
     getMentionTagForUser: function(user) {
         return '@' + user.name;
     },
@@ -121,6 +86,12 @@ BaseAdapter.prototype = {
 
     messageShouldBeUsedInContext: function(envelope) {
         return true;
+    },
+    searchChannel: function(nameOrId) {
+        return this.bot.adapter.searchChannel(nameOrId);
+    },
+    searchUser: function(nameOrId) {
+        return this.bot.adapter.searchUser(nameOrId);
     }
 };
 
