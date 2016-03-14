@@ -16,6 +16,21 @@ var Basic = function() {
                 .map((h) => `> ${h}`)
                 .join('\n'));
         })
+        .respond(/tchau|falou|flw|xau|até(\s(mais|\+))?$/i, (response) => {
+            response.reply('Até logo!');
+        })
+        .respond(/(?:me diga|quais s(?:ã|a)o|liste|fale)?(?:\sas)?\s(tr(ê|e)s|quatro)?\s?leis( da rob(ó|o)tica)?\??$/i, (response) => {
+            var extra = [];
+            if(response.match[1] && response.match[1][0].toLowerCase() === 't') {
+                extra = ['As *quatro* leis da robótica:'];
+            }
+            response.send(extra.concat([
+                '> 0. um robô não pode causar mal à humanidade ou, por omissão, permitir que a humanidade sofra algum mal.',
+                '> 1. Um robô não pode ferir um ser humano ou, por inação, permitir que um ser humano sofra algum mal.',
+                '> 2. Um robô deve obedecer as ordens que lhe sejam dadas por seres humanos exceto nos casos em que tais ordens entrem em conflito com a Primeira Lei.',
+                '> 3. Um robô deve proteger sua própria existência desde que tal proteção não entre em conflito com a Primeira ou Segunda Leis.'
+            ]).join('\n'));
+        })
         .respond(/hallo!/, (response) => {
             response.ask('Sprechen Sie Deutsch?', this.Context.BOOLEAN)
                 .then((response) => {
