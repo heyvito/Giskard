@@ -56,8 +56,9 @@ BaseModule.prototype = {
     }
 };
 
-BaseModule.setup = function(klass) {
+BaseModule.setup = function(klass, prettyKlassName) {
     inherit(klass, BaseModule);
+    klass.prototype._meta = { className: prettyKlassName };
 };
 
 module.exports = BaseModule;

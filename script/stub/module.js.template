@@ -14,5 +14,5 @@ var MODNAME = function(bot) {
     // });
 };
 
-Base.setup(MODNAME);
+Base.setup(MODNAME, 'MODNAME');
 module.exports = MODNAME;

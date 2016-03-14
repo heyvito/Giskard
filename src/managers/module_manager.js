@@ -76,9 +76,7 @@ ModuleManager.prototype = {
                     try {
                         var mName = Path.basename(fp, '.js'),
                             Ctor = require(fp);
-                        Ctor.prototype._meta = {
-                            moduleName: mName
-                        };
+                        Ctor.prototype._meta.moduleName = mName;
                         this.modules[mName] = new Ctor();
                         logger.info(`Loaded module: ${mName}`);
                         var mInfo = this.parseHelp(fp);
