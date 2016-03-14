@@ -8,7 +8,7 @@ var userSchema = mongoose.Schema({
     deleted: Boolean,
     lastSeen: Date,
     presence: String,
-    roles: [String],
+    roles: [String]
 });
 
 userSchema.methods.updatePresence = function(newP) { this.presence = newP; this.save().catch(() => {}); };
@@ -17,18 +17,20 @@ userSchema.methods.send = function(message) { bot.adapter.contextlessSend(this, 
 userSchema.methods.is = function(role) { return this.roles.some(i => i === role); };
 userSchema.methods.isRoot = function() { return this.is('root'); };
 userSchema.methods.getMentionTag = function() { return bot.adapter.getMentionTagForUser(this); };
-userSchema.methods.isOnline = function() { this.presence !== 'away'; };
+userSchema.methods.isOnline = function() { return this.presence !== 'away'; };
 userSchema.methods.updateLastSeen = function() {
     this.lastSeen = Date.now();
     return this.save();
 };
-userSchema.ask = function() { throw new Error('Not Implemented.'); }
+userSchema.ask = function() { throw new Error('Not Implemented.'); };
 userSchema.methods.setRole = function(role) {
     this.roles.push(role);
     return this.save();
 };
 
 userSchema.statics.fromSlackData = function(objData) {
+
+    // jscs:disable
     var uData = {
         id: objData.id,
         username: objData.name,
@@ -36,6 +38,8 @@ userSchema.statics.fromSlackData = function(objData) {
         deleted: objData.deleted,
         presence: objData.presence
     };
+
+    // jscs:enable
     return this
         .findOneAndUpdate({ id: objData.id }, uData, { new: true, upsert: true })
         .then((u) => {

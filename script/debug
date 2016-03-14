@@ -1,0 +1,5 @@
+#!/bin/bash
+# Starts the bot without IPC or process monitor
+
+cd src
+node index.js

@@ -25,7 +25,7 @@ ShellAdapter.prototype = {
             name: 'shellBotDMChannel',
             deleted: false,
             partOf: true
-        })
+        });
         this.baseUser = new this.db.User({
             id: '__shellBaseUser',
             username: '__shellBaseUser',
@@ -63,7 +63,6 @@ ShellAdapter.prototype = {
             this.console.history(hist);
             this.console.interact('Bot> ');
         }.bind(this));
-        // this.ready();
     },
     initialiseConsole: function() {
         this.console = cline();
@@ -134,7 +133,7 @@ ShellAdapter.prototype = {
         if(bot) {
             user = this.botUser;
         } else {
-            user = new User(this.bot, value + 'FakeUser', true);
+            user = new this.db.User({ id: '__shellFakeUser' + value, username: '__shellFakeUser' + value, name: 'Fake User' });
         }
         resolve(arr ? [user] : user);
     },
@@ -151,7 +150,7 @@ ShellAdapter.prototype = {
                 });
                 break;
         }
-        var channel = new Channel(this.bot, value + 'FakeChannel');
+        var channel = new this.db.Channel({ name: value + 'FakeChannel', id: '__shellFakeChannel' + value });
         resolve(channel);
     }
 };

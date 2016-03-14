@@ -1,0 +1,28 @@
+#!/bin/bash
+# Creates a new module based on a template and copies it to the right folder
+
+if [ $# -eq 0 ]
+  then
+    echo 'Expected module name.'
+    echo '    Usage: script/makemodule NAME'
+    echo '    Example: script/makemodule Greeter'
+    echo 'Make sure your module name is capitalised. (:'
+    echo ''
+    exit 1
+fi
+MODULENAME=$1
+FILENAME=$(echo $MODULENAME | tr A-Z a-z)
+USERNAME=$(echo $USER)
+DATENOW=$(date)
+if [ -f bot_modules/$FILENAME.js ]; then
+    echo "Whoa there! Looks like there's already a module named $FILENAME."
+    echo "We won't overwrite it. :/"
+    echo "Aborting!"
+    exit 1
+fi
+echo "Creating module class $MODULENAME"
+echo "to bot_modules/$FILENAME.js"
+echo "Shall we continue? (Is your module class name capitalised?)"
+read
+(cat script/stub/module.js.template | sed "s/USERNAME/$USERNAME/g" | sed "s/DATENOW/$DATENOW/g" | sed "s/MODNAME/$MODULENAME/g") > bot_modules/$FILENAME.js
+echo 'Done. (:'

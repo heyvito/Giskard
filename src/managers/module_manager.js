@@ -1,20 +1,20 @@
 var fs = require('fs'),
     Path = require('path'),
-    logger = require('../utils/logger')('ModuleLoader')
+    logger = require('../utils/logger')('ModuleLoader');
 
 var ModuleManager = function() {
     this.basePath = Path.resolve(Path.join(__dirname, '..', '..', 'bot_modules'));
     this.modules = {};
     this.modulesInfo = {};
     this.help = [];
-}
+};
 
 ModuleManager.prototype = {
     parseHelp: function(file) {
         try {
             var body = fs.readFileSync(file, 'utf-8').split('\n'),
                 header = { name: '', authors: [], created: '' },
-                commands = [];
+                commands = [],
                 current = null;
             body = body
                 .slice(0, body.indexOf(''))
@@ -41,7 +41,7 @@ ModuleManager.prototype = {
                             data = l.trim().substr(1).trim().split(':');
                             current = { name: data[0], description: [data[1].trim()] };
                         } else {
-                            current.description.push(line.trim());
+                            current.description.push(l.trim());
                         }
                     }
                 });
@@ -94,6 +94,6 @@ ModuleManager.prototype = {
             resolve();
         });
     }
-}
+};
 
 module.exports = ModuleManager;

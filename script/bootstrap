@@ -1,0 +1,20 @@
+#!/bin/bash
+# Bootstraps the thing
+
+if [ -f settings.json ]; then
+    echo "Whoa! We almost overwrote your settings.json!"
+    echo "Just kidding: Refusing to bootstrap since there's already a settings.json (:"
+    echo "Have a nice day!"
+    exit 1
+fi
+
+cp script/stub/settings.json.template settings.json
+echo "There you go. We have just boostrapped a brand new settings.json. Yay!"
+
+if [ $1 == "--dev" ]; then
+    echo "Now installing npm deps (including dev), hold tight..."
+    npm install
+else
+    echo "Now installing npm deps, hold tight..."
+    npm install --production
+fi

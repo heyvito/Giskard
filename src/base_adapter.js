@@ -17,7 +17,7 @@ BaseAdapter.prototype = {
     makeEnvelope: function() {
         var args = Array.prototype.slice.apply(arguments, []);
         args.unshift(undefined);
-        return new (Function.prototype.bind.apply(Envelope, args));
+        return new (Function.prototype.bind.apply(Envelope, args)); // jshint ignore:line
     },
 
     setup: function() { return Promise.resolve(); },

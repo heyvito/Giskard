@@ -10,6 +10,6 @@ Envelope.prototype = {
     allowPropagation: function() {
         this.stopPropagation = false;
     }
-}
+};
 
 module.exports = Envelope;

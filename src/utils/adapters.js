@@ -4,7 +4,7 @@ var fs = require('fs'),
 
 var Adapters = function() {
     this.basePath = Path.resolve(Path.join(__dirname, '..', 'adapters'));
-}
+};
 
 Adapters.prototype = {
     getAdapters: function() {
@@ -25,6 +25,6 @@ Adapters.prototype = {
             }
         });
     }
-}
+};
 
 module.exports = Adapters;

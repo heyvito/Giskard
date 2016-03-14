@@ -1,0 +1,8 @@
+#!/bin/bash
+# Updates project documentation to docs/
+if [ ! -f node_modules/.bin/jsdoc ]; then
+    echo "Cannot find jsdoc. Did you run npm install?"
+else
+    echo "Generating documentation..."
+    node_modules/.bin/jsdoc src/*.js -c script/stub/jsdoc.js
+fi

@@ -6,7 +6,7 @@ var db = require('../utils/db'),
 var ContextManager = function() {
     this.queue = [];
     return this;
-}
+};
 
 ContextManager.prototype = {
     cleanUp: function() {
@@ -19,8 +19,8 @@ ContextManager.prototype = {
                         .removeMessage(i.ts, i.cid)
                         .then(() => db.Context.remove({ ts: i.ts }))
                         .catch(ex => logger.warning('Failed to remove context: ' + ex.message))
-                        )
-            })
+                        );
+            });
     },
     registerContext: function(message) {
         logger.debug('Registering context: ');
@@ -43,7 +43,8 @@ ContextManager.prototype = {
     },
     checkMessage: function(envelope) {
         var normalisedChannel = this.normaliseObject(envelope.channel),
-            normalisedUser = this.normaliseObject(envelope.user);
+            normalisedUser = this.normaliseObject(envelope.user),
+            result = false;
 
         var comparator = i => i.channel === normalisedChannel && i.user === normalisedUser;
         logger.debug('Checking message against queue:');
@@ -54,12 +55,10 @@ ContextManager.prototype = {
 
         if(this.queue.some(comparator)) {
             var items = this.queue.filter(comparator),
-                result = false,
                 text = envelope.text + '';
 
             if(bot.mentionMarks.some(m => envelope.text.toLowerCase().indexOf(m) === 0)) {
-                var text = envelope.text + '';
-                bot.mentionMarks.forEach(i => { text = text.replace(i, '') });
+                bot.mentionMarks.forEach(i => { text = text.replace(i, ''); });
                 text = text.trim();
                 if(text.indexOf(':') === 0) {
                     text = text.replace(':', '').trim();
@@ -84,7 +83,7 @@ ContextManager.prototype = {
     },
     pushContext: function(message, user, channel, type) {
         var extra = Array.prototype.slice.apply(arguments, []).slice(4);
-        logger.debug('Pushing context: ')
+        logger.debug('Pushing context: ');
         logger.debug({
             message: message,
             user: user,

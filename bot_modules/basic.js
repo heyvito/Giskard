@@ -48,7 +48,7 @@ var Basic = function() {
                     response.reply('You gave me ' + response.match);
                 });
         });
-}
+};
 
 Base.setup(Basic);
 

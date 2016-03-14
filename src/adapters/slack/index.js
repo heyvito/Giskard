@@ -48,7 +48,7 @@ SlackAdapter.prototype = {
                     this.db.User.fromSlackData(u)
                         .then((u) => {
                             this.users[u.id] = u;
-                        })
+                        });
                 }));
                 Promise.all(proms)
                     .then(resolve)
@@ -114,7 +114,7 @@ SlackAdapter.prototype = {
         return '<@' + user.id + '>';
     },
     removeMessage: function(messageId, channel) {
-        return this.web.chat.delete(messageId, channel)
+        return this.web.chat.delete(messageId, channel);
     },
     messageShouldBeUsedInContext: function(envelope) {
         if(envelope.channel.id[0] !== 'D') {
@@ -123,7 +123,7 @@ SlackAdapter.prototype = {
             return true;
         }
     }
-}
+};
 
 BaseAdapter.setup(SlackAdapter);
 

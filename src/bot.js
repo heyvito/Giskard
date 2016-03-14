@@ -69,7 +69,7 @@ Bot.prototype = {
             process.exit(1);
         } else {
             return am.loadAdapter(adapterName)
-                .then((Klass) => { return (this.adapter = new Klass(this)); })
+                .then((Klass) => { return (this.adapter = new Klass(this)); }) // jshint ignore:line
                 .then((adp) => adp.setup())
                 .catch(ex => {
                     this.logger.error('Error initialising adapter: ');
@@ -78,6 +78,6 @@ Bot.prototype = {
                 });
         }
     }
-}
+};
 
 module.exports = new Singleton(Bot);

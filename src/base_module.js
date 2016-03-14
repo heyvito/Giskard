@@ -44,7 +44,7 @@ BaseModule.prototype = {
     ask: function() {
         return bot.contextManager.pushContext.apply(bot.contextManager, arguments);
     }
-}
+};
 
 BaseModule.setup = function(klass) {
     inherit(klass, BaseModule);

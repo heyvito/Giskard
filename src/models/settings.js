@@ -10,6 +10,7 @@ var Settings = function() {
         mongoUrl: 'mongodb://localhost:27017/giskard',
         adapter: 'shell',
         nicknames: [],
+        loggerLevel: 'info'
     };
 
     try {
@@ -27,6 +28,6 @@ var Settings = function() {
         logger.error(ex);
         process.exit(1);
     }
-}
+};
 
 module.exports = new Singleton(Settings);

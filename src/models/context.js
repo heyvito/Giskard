@@ -39,8 +39,8 @@ var numberComparator = function(value) {
     } else if(typeof value === 'number') {
         return { valid: true, value: value };
     }
-    return { valid: false }
-}
+    return { valid: false };
+};
 
 var booleanComparator = function(value) {
     var positive = /^(y.*|sim|uhum|s|aff?irmativ(e|o)|positiv(e|o)|1|thumbs_?up|ok_?hand)$/i,
@@ -51,8 +51,8 @@ var booleanComparator = function(value) {
         return { valid: true, value: false };
     } else {
         return { valid: false };
-    };
-}
+    }
+};
 
 var regexComparator = function(value, comparator) {
     if(comparator.test(value)) {
@@ -75,7 +75,7 @@ model.comparatorFor = function(type) {
         default:
             logger.warning('Unknown comparator of type ' + type);
             return null;
-    };
-}
+    }
+};
 
 module.exports = model;

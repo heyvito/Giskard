@@ -1,0 +1,72 @@
+coreConf = "script/stub/jshint-core.js";
+modulesConf = "script/stub/jshint-modules.js";
+sampleText = "This is a sample command description that will be parsed";
+
+def log() {
+    println("script/test: $1");
+}
+
+def lint(dir, conf) {
+   @(find $dir -name '*.js' | xargs node_modules/.bin/jshint -c $conf);
+}
+
+def ensureStandard(dir) {
+    @(node_modules/.bin/jscs --config=script/stub/jscs-config.json $dir);
+}
+
+def exit(code) {
+    @(exit $code);
+}
+
+if(exists("node_modules/.bin/jshint") == false) {
+    log("Cannot find jshint. Did you run npm install?");
+    exit(1);
+}
+
+if(exists("node_modules/.bin/jscs") == false) {
+    log("Cannot find jscs. Did you run npm install?");
+    exit(1);
+}
+
+log("Linting core files...");
+lint("src", coreConf);
+if (success() == false) {
+    log("Errors found linting core files.");
+    exit(1);
+} else {
+    log("Linting module files...");
+    lint("bot_modules", modulesConf);
+    if (success() == false) {
+        log("Errors found linting module files.");
+        exit(1);
+    } else {
+        log("Checking core files structure...");
+        ensureStandard("src");
+        if(success() == false) {
+            log("Errors found on core structures.");
+            exit(1);
+        } else {
+            log("Checking modules files structure...");
+            ensureStandard("bot_modules");
+            if(success() == false) {
+                log("Errors foudn on module structures.");
+                exit(1);
+            } else {
+                log("Proofing module files...");
+                result = @(grep -l "$sampleText" bot_modules/*.js);
+                if (success() == true) {
+                    log("One or more modules contains sample documentation that must be replaced by");
+                    log("the one regarding the module itself or removed:");
+                    println();
+                    println(@(echo $result));
+                    println();
+                    log("Please fix this issue before proceeding.");
+                    exit(1);
+                } else {
+                    log("Everything looks awesome.");
+                    exit(0);
+                }
+            }
+        }
+    }
+}

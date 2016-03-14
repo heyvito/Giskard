@@ -18,6 +18,8 @@
     "bluebird": "^3.3.4",
     "chalk": "^1.1.1",
     "cline": "^0.8.2",
+    "jscs": "^2.11.0",
+    "jshint": "^2.9.1",
     "mongodb": "^2.1.7",
     "mongoose": "^4.4.7",
     "npmlog": "^2.0.2"
