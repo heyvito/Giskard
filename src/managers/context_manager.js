@@ -5,6 +5,7 @@ var db = require('../utils/db'),
 
 /**
  * Represents an object capable of managing Contexts pushed by modules.
+ * @constructor
  */
 var ContextManager = function() {
     this.queue = [];

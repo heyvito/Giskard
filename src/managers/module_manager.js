@@ -4,6 +4,7 @@ var fs = require('fs'),
 
 /**
  * Represents an object capable of loading and handling modules.
+ * @constructor
  */
 var ModuleManager = function() {
     this.basePath = Path.resolve(Path.join(__dirname, '..', '..', 'bot_modules'));

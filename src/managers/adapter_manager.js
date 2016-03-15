@@ -5,6 +5,8 @@ var fs = require('fs'),
 /**
  * Represents an object capable of listing and loading adapters using defined
  * conventions.
+ *
+ * @constructor
  */
 var Adapters = function() {
     this.basePath = Path.resolve(Path.join(__dirname, '..', 'adapters'));

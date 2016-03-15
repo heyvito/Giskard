@@ -5,6 +5,7 @@ var logger = require('../utils/logger')('InputManager'),
 /**
  * Represents an object capable of handling user input from a chat source, coming from
  * an Adapter instance.
+ * @constructor
  */
 var InputManager = function() {
     this.listeners = [];
