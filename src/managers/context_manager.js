@@ -3,12 +3,20 @@ var db = require('../utils/db'),
     Response = require('../models/response'),
     logger = require('../utils/logger')('ContextManager');
 
+/**
+ * Represents an object capable of managing Contexts pushed by modules.
+ */
 var ContextManager = function() {
     this.queue = [];
     return this;
 };
 
 ContextManager.prototype = {
+
+    /**
+     * Cleans up any dangling context known in the database.
+     * @return {undefined}                          Nothing.
+     */
     cleanUp: function() {
         logger.debug('Performing cleanup...');
         db.Context
@@ -22,6 +30,12 @@ ContextManager.prototype = {
                         );
             });
     },
+
+    /**
+     * Registers a Context with a given message and pushes it to the watcher queue.
+     * @param  {Message} message Message object representing the prompt.
+     * @return {undefined}                                      Nothing.
+     */
     registerContext: function(message) {
         logger.debug('Registering context: ');
         logger.debug(message);
@@ -38,9 +52,23 @@ ContextManager.prototype = {
                 bot.adapter.removeMessage(message.messageCallback.ts);
             });
     },
+
+    /**
+     * Normalises a database or adapter-related object that contains an identifier.
+     * @param  {Object}     v           String or object containing an ID property.
+     * @return {String}                 `v` itself when `v` is a String; otherwise, v.id, even
+     *                                  if v.id is undefined.
+     */
     normaliseObject: function(v) {
         return typeof v === 'string' ? v : v.id;
     },
+
+    /**
+     * Checks an incoming message for whether it satisfies an enqueued Context. When the condition
+     * is truthy, the envelope is voided and the underlying promise is resolved.
+     * @param  {Envelope} envelope      The incoming message data
+     * @return {Boolean}                Whether the envelope has been voided.
+     */
     checkMessage: function(envelope) {
         var normalisedChannel = this.normaliseObject(envelope.channel),
             normalisedUser = this.normaliseObject(envelope.user),
@@ -81,6 +109,27 @@ ContextManager.prototype = {
         }
         return result;
     },
+
+    /**
+     * Pushes a new context with a given message, user, channel and type. This discards any
+     * other context of the same type for the same user/channel combination.
+     * @param  {String}         message Message to be sent to the target user in the target channel.
+     * @param  {User|String}    user    Target user to receive the message. Can either be an User
+     *                                  instance or the ID used by the Adapter to identify the target
+     *                                  user.
+     * @param  {Channel|String} channel Channel to where the message will be sent to. Can either be
+     *                                  a Channel instance, or the ID used by the Adapter to identify
+     *                                  the target channel.
+     * @param  {Integer}        type    Type of context to be pushed. Types are defined in the Context
+     *                                  model and can be `Context.NUMBER`, `Context.BOOLEAN`, or
+     *                                  `Context.REGEX`. Documentation about those items and how
+     *                                  they behave can be found in the `Context` documentation.
+     * @return {Promise}                A Promise that will be resolved whenever the target user
+     *                                  replies to the prompt in the given Channel. This promise
+     *                                  cannot be reject, but it may never be resolved, given that
+     *                                  it will be invalidated if a new Context with the same
+     *                                  combination of User/Channel/Type is pushed.
+     */
     pushContext: function(message, user, channel, type) {
         var extra = Array.prototype.slice.apply(arguments, []).slice(4);
         logger.debug('Pushing context: ');

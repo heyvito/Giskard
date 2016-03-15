@@ -8,8 +8,26 @@ var channelSchema = mongoose.Schema({
     partOf: Boolean
 });
 
+/**
+ * Returns the Channel descrption. Useful during debug.
+ * @return {String}     Channel description.
+ */
 channelSchema.methods.toString = function() { return `[Giskard::Models::Channel <${this.id}>]`; };
-channelSchema.methods.send = function(message) { bot.adapter.contextlessSend(this, message); };
+
+/**
+ * Sends an message to the current Channel
+ * @param  {String}         Message to be sent to the channel.
+ * @return {Promise}        A Promise that will be either resolved or rejected when the message is
+ *                          sent or fails to be sent.
+ */
+channelSchema.methods.send = function(message) { return bot.adapter.contextlessSend(this, message); };
+
+/**
+ * Creates or updates a Channel on the database based on received Slack data.
+ * @param  {AnyObject}  objData     Received Channel descriptor from Slack
+ * @return {Promise}                A Promise that will be resolved or rejected when the channel
+ *                                  has been created or updated.
+ */
 channelSchema.statics.fromSlackData = function(objData) {
 
     // jscs:disable

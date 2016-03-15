@@ -61,7 +61,7 @@ Bot.prototype = {
     setupAdapter: function() {
         var adapterName = this.settings.adapter;
         this.logger.info(`Loading adapter: ${adapterName}...`);
-        var AdapterManager = require('./utils/adapters'),
+        var AdapterManager = require('./managers/adapter_manager'),
             am = new AdapterManager(),
             availableAdapters = am.getAdapters();
         if(!availableAdapters.some(a => a.toLowerCase() === adapterName.toLowerCase())) {

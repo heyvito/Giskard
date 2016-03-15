@@ -14,12 +14,22 @@ var BaseAdapter = function(bot) {
 };
 
 BaseAdapter.prototype = {
+    /**
+     * Initialises a new instance of an `Envelope` passing the same arguments
+     * provided to this function to its constructor.
+     * @return {Envelope}       A new envelope with the given arguments.
+     */
     makeEnvelope: function() {
         var args = Array.prototype.slice.apply(arguments, []);
         args.unshift(undefined);
         return new (Function.prototype.bind.apply(Envelope, args)); // jshint ignore:line
     },
 
+    /**
+     * Sets up this adapter.
+     * @return {Promise}   A Promise that will be resolved whenever this adapter is done setting up
+     *                     itself. This promise can be rejected if the operation fails.
+     */
     setup: function() { return Promise.resolve(); },
 
     /**
@@ -76,17 +86,48 @@ BaseAdapter.prototype = {
         this.events.on(event, callback);
         return this;
     },
+
+    /**
+     * Gets a mention tag for the given user.
+     * @param  {User}   user    User object to generate the tag from.
+     * @return {String}         A string representing the tag that mentions the
+     *                          user, considering the current adapter mechanics.
+     */
     getMentionTagForUser: function(user) {
-        return '@' + user.name;
+        return '@' + user.username;
     },
 
+    /**
+     * Removes a given message from the message log. This method depends on the current
+     * adapter's implementation and capabilities. This implementation can also accept
+     * other parameters and depends on the used adapter's mechanics.
+     * @param  {String}     messageId   ID of the message to be removed.
+     * @return {Promise}                A Promise that will be resolved whenever the message
+     *                                  is removed from the log.
+     */
     removeMessage: function(messageId) {
         return Promise.reject();
     },
 
+    /**
+     * Courtesy method. Used by the Context subsystem to determine if an incoming `Envelope` message
+     * should mention the bot considering it's state.
+     * @param  {Envelope}   envelope    Envelope instance to be analised.
+     * @return {Boolean}                Whether to exepect this incoming message to mention the bot.
+     */
     messageShouldBeUsedInContext: function(envelope) {
         return true;
     },
+
+    /**
+     * Searches a channel with the given name or ID, where the ID must be a identifier used by
+     * the current Adapter to internally represent known channels.
+     * @param {String}      nameOrId            Name or ID of the channel to be found.
+     * @return {Promise}                        A promise that will be resolved whenever the channel
+     *                                          is found. It will be rejected whenever the channel
+     *                                          cannot be found or there's an underlying problem
+     *                                          during the search process.
+     */
     searchChannel: function(nameOrId) {
         return new Promise((resolve, reject) => {
             this.db.Channel.findOne({ $or: [{ name: nameOrId }, { id: nameOrId }] })
@@ -100,6 +141,16 @@ BaseAdapter.prototype = {
             .catch(reject);
         });
     },
+
+    /**
+     * Searches an user with the given name or ID, where the ID must be a identifier used by
+     * the current Adapter to internally represent known channels.
+     * @param {String}      nameOrId            Name or ID of the user to be found.
+     * @return {Promise}                        A promise that will be resolved whenever the user
+     *                                          is found. It will be rejected whenever the user
+     *                                          cannot be found or there's an underlying problem
+     *                                          during the search process.
+     */
     searchUser: function(nameOrId) {
         return new Promise((resolve, reject) => {
             this.db.User.findOne({ $or: [{ username: nameOrId }, { id: nameOrId }] })

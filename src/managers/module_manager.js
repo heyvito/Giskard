@@ -2,6 +2,9 @@ var fs = require('fs'),
     Path = require('path'),
     logger = require('../utils/logger')('ModuleLoader');
 
+/**
+ * Represents an object capable of loading and handling modules.
+ */
 var ModuleManager = function() {
     this.basePath = Path.resolve(Path.join(__dirname, '..', '..', 'bot_modules'));
     this.modules = {};
@@ -10,6 +13,13 @@ var ModuleManager = function() {
 };
 
 ModuleManager.prototype = {
+
+    /**
+     * Parses a module documentation header and commands
+     * @param  {Bot}        bot     The current bot instance
+     * @param  {String}     file    Module file path to be parsed
+     * @return {AnyObject}          An object containing header and commands properties
+     */
     parseHelp: function(file) {
         try {
             var body = fs.readFileSync(file, 'utf-8').split('\n'),
@@ -63,11 +73,24 @@ ModuleManager.prototype = {
             return null;
         }
     },
+
+    /**
+     * Reads the modules directory and returns all possible loadable JavaScript files.
+     * @return {String[]}       A list of possibly loadable JavaScript modules.
+     */
     getModules: function() {
         return fs.readdirSync(this.basePath)
             .filter(f => Path.extname(f) === '.js')
             .map(f => Path.join(this.basePath, f));
     },
+
+    /**
+     * Loads all possible modules, ignoring failed ones.
+     * Also parses module's documentations and fills metadata required by any subsystem.
+     * @return {Promise}          A Promise that will be resolved whenever all modules have been loaded
+     *                            or failed to load. The resulting list will contain all modules
+     *                            constructors.
+     */
     loadModules: function() {
         logger.info('Loading modules...');
         return new Promise((resolve) => {
