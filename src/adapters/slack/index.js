@@ -122,32 +122,6 @@ SlackAdapter.prototype = {
         } else {
             return true;
         }
-    },
-    searchChannel: function(nameOrId) {
-        return new Promise((resolve, reject) => {
-            this.db.Channel.findOne({ $or: [{ name: nameOrId }, { id: nameOrId }] })
-            .then((c) => {
-                if(c) {
-                    resolve(c);
-                } else {
-                    reject(new Error('Channel not found.'));
-                }
-            })
-            .catch(reject);
-        });
-    },
-    searchUser: function(nameOrId) {
-        return new Promise((resolve, reject) => {
-            this.db.User.findOne({ $or: [{ username: nameOrId }, { id: nameOrId }] })
-            .then((u) => {
-                if(u) {
-                    resolve(u);
-                } else {
-                    reject(new Error('User not found.'));
-                }
-            })
-            .catch(reject);
-        });
     }
 };
 
