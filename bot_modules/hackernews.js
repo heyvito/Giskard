@@ -1,9 +1,6 @@
 // $ HackerNews
-// $ Authors: vagrant
+// $ Authors: John
 // $ Created on: Tue Mar 15 13:05:51 UTC 2016
-// - Test: This is a sample command description that will be parsed
-// and shown to users when they request help. Make sure to document
-// every command your module provides.
 
 var Base = require('../src/base_module'),
     cheerio = require('cheerio');
