@@ -51,12 +51,30 @@ Response.prototype = {
         this.envelope.allowPropagation();
     },
 
+    /**
+     * Replies this message with a question.
+     * @param  {String} message Prompt to be sent to the user.
+     * @param  {Number} type    Type of expected answer. Possible values are Context.NUMBER,
+     *                          Context.BOOL, and Context.REGEX. Documentation about those items and
+     *                          how they behave can be found in the `Context` documentation.
+     * @return {Promise}        A Promise that will be resolved whenever the target user replies to
+     *                          the prompt in the given Channel. This promise cannot be rejected,
+     *                          but it may never be resolved.
+     */
     ask: function(message, type) {
         var extra = Array.prototype.slice.apply(arguments, []).slice(2),
             args = [message, this.user, this.channel, type].concat(extra);
         return bot.contextManager.pushContext.apply(bot.contextManager, args);
     },
 
+    /**
+     * Sends a feedback to the channel or user that sent the incoming message to the bot. This
+     * feature depends on the implementation of the Adapter in use, and may not have effect. For
+     * instance, when using the Slack adapter, the result is an typing indicator on the bottom of
+     * the window, stating the the user behind the current bot is typing. This state is reseted
+     * automatically, whenever a new message from this bot appears.
+     * @return {undefined}  Nothing.
+     */
     sendTyping: function() {
         return bot.adapter.sendTypingState.apply(bot.adapter, [this]);
     },

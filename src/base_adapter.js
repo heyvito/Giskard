@@ -171,7 +171,19 @@ BaseAdapter.prototype = {
      *                                      the target channel.
      * @return {undefined}                    Nothing.
      */
-    sendTypingState: function(envelope) { }
+    sendTypingState: function(envelope) { },
+
+    /**
+     * Adds an reaction to a given message. This feature depends on the current adapter implementation
+     * and will be rejected by default.
+     * @param {Envelope}    envelope    Envelope containing the message that will be reacted to.
+     * @param {String}      reaction    Emoji name to be added to the message.
+     * @return {Promise}                A Promise that will be resolved after the reaction has been
+     *                                  added to the target message. Again, notice that this feature
+     *                                  depends on the current Adapter being used and will be rejected
+     *                                  by default.
+     */
+    addReaction: function(envelope, reaction) { return Promise.reject(); }
 };
 
 /**

@@ -127,7 +127,7 @@ ContextManager.prototype = {
      *                                  they behave can be found in the `Context` documentation.
      * @return {Promise}                A Promise that will be resolved whenever the target user
      *                                  replies to the prompt in the given Channel. This promise
-     *                                  cannot be reject, but it may never be resolved, given that
+     *                                  cannot be rejected, but it may never be resolved, given that
      *                                  it will be invalidated if a new Context with the same
      *                                  combination of User/Channel/Type is pushed.
      */
