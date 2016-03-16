@@ -55,6 +55,10 @@ Response.prototype = {
         var extra = Array.prototype.slice.apply(arguments, []).slice(2),
             args = [message, this.user, this.channel, type].concat(extra);
         return bot.contextManager.pushContext.apply(bot.contextManager, args);
+    },
+
+    sendTyping: function() {
+        return bot.adapter.sendTypingState.apply(bot.adapter, [this]);
     }
 };
 

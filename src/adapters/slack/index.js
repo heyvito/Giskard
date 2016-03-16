@@ -122,6 +122,13 @@ SlackAdapter.prototype = {
         } else {
             return true;
         }
+    },
+    sendTypingState: function(envelope) {
+        var channel = envelope.channel;
+        if(typeof channel === 'object') {
+            channel = channel.id;
+        }
+        this.rtm.sendTyping(channel);
     }
 };
 

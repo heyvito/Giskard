@@ -163,7 +163,15 @@ BaseAdapter.prototype = {
             })
             .catch(reject);
         });
-    }
+    },
+
+    /**
+     * Sends a notification to the adapter source indicating that the bot is typing something.
+     * @param {Response}   envelope         The object being responded by the bot. Used to identify
+     *                                      the target channel.
+     * @return {undefined}                    Nothing.
+     */
+    sendTypingState: function(envelope) { }
 };
 
 /**
