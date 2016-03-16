@@ -129,6 +129,21 @@ SlackAdapter.prototype = {
             channel = channel.id;
         }
         this.rtm.sendTyping(channel);
+    },
+    addReaction: function(envelope, reaction) {
+        var channel = envelope.channel.id,
+            ts = envelope.message.ts;
+        return new Promise((resolve, reject) => {
+            this.web.reactions.add(reaction, {
+                channel: channel,
+                timestamp: ts
+            }, (err, res) => {
+                if(err || !res.ok) {
+                    return reject(res);
+                };
+                resolve();
+            });
+        });
     }
 };
 

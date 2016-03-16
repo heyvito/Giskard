@@ -59,6 +59,19 @@ Response.prototype = {
 
     sendTyping: function() {
         return bot.adapter.sendTypingState.apply(bot.adapter, [this]);
+    },
+
+    /**
+     * Adds an reaction to this message. This feature depends on the current adapter implementation
+     * and will be rejected by default.
+     * @param {String} reactionName Emoji name to be added to the message.
+     * @return {Promise}            A Promise that will be resolved after the reaction has been
+     *                              added to the target message. Again, notice that this feature
+     *                              depends on the current Adapter being used and will be rejected
+     *                              by default.
+     */
+    addReaction: function(reactionName) {
+        return bot.adapter.addReaction.apply(bot.adapter, [this.envelope, reactionName]);
     }
 };
 
