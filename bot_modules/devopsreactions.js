@@ -16,7 +16,6 @@ var DevOpsReactions = function(bot) {
             .then(($) => {
                 var title = $('.post_title a').text(),
                     image = $('.item_content p img').attr('src');
-                console.log(title, image);
                 if (title && image) {
                     response.send([title, image].join('\n'));
                 }
