@@ -28,12 +28,24 @@ var Settings = function() {
     }
 
     _.merge(preConf, this.defaultSettings, fileConf);
-    Object.keys(preConf)
+    Object.keys(this.defaultSettings)
         .forEach(k => {
             if(process.env.hasOwnProperty(k)) {
                 preConf[k] = process.env[k];
             }
         });
+
+    if(process.env.token) {
+        preConf.token = process.env.token;
+    }
+
+    if(process.env.PORT) {
+        preConf.httpServerPort = process.env.PORT;
+    }
+
+    if(process.env.MONGO_URL) {
+        preConf.mongoUrl = process.env.MONGO_URL;
+    }
 
     _.merge(this, preConf);
 };

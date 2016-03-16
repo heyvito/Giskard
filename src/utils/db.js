@@ -2,7 +2,8 @@ var mongoose = require('mongoose'),
     settings = require('../models/settings').sharedInstance(),
     User = require('../models/user'),
     Context = require('../models/context'),
-    Channel = require('../models/channel');
+    Channel = require('../models/channel'),
+    logger = require('./logger')('DatabaseConnector');
 
 var connected;
 
@@ -15,6 +16,7 @@ module.exports = {
             return Promise.resolve();
         } else {
             return new Promise((resolve, reject) => {
+                logger.verbose(`Connecting to ${settings.mongoUrl}`);
                 mongoose.connect(settings.mongoUrl);
                 mongoose.connection
                     .on('open', resolve)
