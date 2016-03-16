@@ -13,22 +13,29 @@ var Settings = function() {
         loggerLevel: 'info',
         httpServerPort: 2727
     };
-
+    var fileConf = {},
+        preConf = {};
     try {
         var path = Path.resolve(process.env.GISKARDCONF || Path.join(this.rootDir, 'settings.json'));
-        if(!fs.existsSync(path)) {
-            logger.error(`Cannot find configuration file at ${path}. Please refer to the Readme.`);
-            process.exit(1);
-        } else {
-            var file = fs.readFileSync(path).toString(),
-                jsonData = JSON.parse(file);
-            _.merge(this, this.defaultSettings, jsonData);
+        if(fs.existsSync(path)) {
+            var file = fs.readFileSync(path).toString();
+            fileConf = JSON.parse(file);
         }
     } catch(ex) {
-        logger.error('Error loading configuration file: ');
+        logger.error('Error loading settings file: ');
         logger.error(ex);
         process.exit(1);
     }
+
+    _.merge(preConf, this.defaultSettings, fileConf);
+    Object.keys(preConf)
+        .forEach(k => {
+            if(process.env.hasOwnProperty(k)) {
+                preConf[k] = process.env[k];
+            }
+        });
+
+    _.merge(this, preConf);
 };
 
 module.exports = new Singleton(Settings);
