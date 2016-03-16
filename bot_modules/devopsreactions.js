@@ -1,6 +1,7 @@
 // $ DevOpsReactions
 // $ Authors: John
 // $ Created on: Tue Mar 15 13:20:23 UTC 2016
+// - devopsreactions: Mostra uma entrada aleatória do devopsreactions.tumblr.com
 
 var Base = require('../src/base_module'),
     cheerio = require('cheerio');
