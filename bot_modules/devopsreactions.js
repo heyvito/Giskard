@@ -10,6 +10,7 @@ var DevOpsReactions = function(bot) {
     Base.call(this, bot);
 
     this.respond(/devops\s?reactions$/i, (response) => {
+        response.sendTyping();
         this.http({
                 uri: `http://devopsreactions.tumblr.com/random`,
                 transform: (body) => cheerio.load(body)

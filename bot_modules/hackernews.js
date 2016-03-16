@@ -9,6 +9,7 @@ var HackerNews = function(bot) {
     Base.call(this, bot);
 
     this.respond(/hacker\s?news$/i, (response) => {
+        response.sendTyping();
         this.http({
                 uri: `http://news.ycombinator.com`,
                 transform: (body) => cheerio.load(body)

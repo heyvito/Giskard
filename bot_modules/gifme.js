@@ -9,6 +9,7 @@ var Base = require('../src/base_module');
 var GifMe = function(bot) {
     Base.call(this, bot);
     this.respond(/gif( me)? ([\w\??| ]+)$/i, (response) => {
+        response.sendTyping();
         var tag = response.match[2];
         this.http({
                 uri: 'http://api.gifme.io/v1/search',

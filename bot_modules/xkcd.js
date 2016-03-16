@@ -10,6 +10,7 @@ var Xkcd = function(bot) {
     Base.call(this, bot);
 
     this.respond(/xkcd(?: me)? ([\d]+)$/i, (response) => {
+        response.sendTyping();
         this.http({
                 uri: `http://xkcd.com/${response.match[1]}`,
                 transform: (body) => cheerio.load(body)
