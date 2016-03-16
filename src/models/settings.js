@@ -10,7 +10,8 @@ var Settings = function() {
         mongoUrl: 'mongodb://localhost:27017/giskard',
         adapter: 'shell',
         nicknames: [],
-        loggerLevel: 'info'
+        loggerLevel: 'info',
+        httpServerPort: 2727
     };
 
     try {

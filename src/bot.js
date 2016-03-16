@@ -26,10 +26,12 @@ Bot.prototype = {
         this.mentionMarks = [];
         var InputManager = require('./managers/input_manager'),
             ModuleManager = require('./managers/module_manager'),
-            ContextManager = require('./managers/context_manager');
+            ContextManager = require('./managers/context_manager'),
+            ApiManager = require('./managers/api_manager');
         this.moduleManager = new ModuleManager();
         this.inputManager = new InputManager();
         this.contextManager = new ContextManager();
+        this.apiManager = new ApiManager();
         this.logger.info('Initialising database connection...');
         this.db = require('./utils/db');
         this.db.prepare()
@@ -37,6 +39,7 @@ Bot.prototype = {
                  this.setupAdapter()
                     .then(() => {
                         this.contextManager.cleanUp();
+                        this.apiManager.startServer();
                         this.moduleManager
                             .loadModules()
                             .then(() => this.logger.info('Dispatching "run" command to Adapter...'))
