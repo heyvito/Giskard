@@ -9,6 +9,12 @@ var contextSchema = mongoose.Schema({
     ts: String
 });
 
+/**
+ * Gets the user associated to this context
+ * @return {Promise}        A Promise that will be resolved when the user associated to this Context
+ *                          is found. If the context has not yet been saved, the promise is
+ *                          automatically rejected.
+ */
 contextSchema.methods.getUser = function() {
     if(!this.id) {
         return Promise.reject('Cannot perform getUser on an unsaved Context object.');
@@ -17,6 +23,13 @@ contextSchema.methods.getUser = function() {
     }
 };
 
+/**
+ * Courtesy method. Creates a new Context from a given {Message}, {User} and {Channel}.
+ * @param  {Message}    message Message that will have its context used in the new Context.
+ * @param  {User}       user    User to whom the Context belongs to.
+ * @param  {Channel}    channel Channel to where the Context belongs to.
+ * @return {Promise}            A Promise that will be resolved when the Context is created.
+ */
 contextSchema.statics.createWithMessage = function(message, user, channel) {
     return this.create({
         uid: typeof user === 'string' ? user : user.id,
@@ -27,8 +40,22 @@ contextSchema.statics.createWithMessage = function(message, user, channel) {
 
 var model = mongoose.model('Context', contextSchema);
 
+/**
+ * Expects an answer that can be successfully converted into a number. Only integers are returned.
+ * @type {Number}
+ */
 model.NUMBER = 1;
+
+/**
+ * Expects an answer that matches a positive or negative regex.
+ * @type {Number}
+ */
 model.BOOLEAN = 2;
+
+/**
+ * Expects an answer that matches a third argument that is a custom Regex object
+ * @type {Number}
+ */
 model.REGEX = 3;
 
 var numberComparator = function(value) {
@@ -64,6 +91,12 @@ var regexComparator = function(value, comparator) {
 
 regexComparator.extra = true;
 
+/**
+ * Returns a matcher function depending on the incoming type
+ * @param  {Number} type   A Context type. Possible values are NUMBER, BOOLEAN and REGEX
+ * @return {Function}      A matcher function capable of parsing and returning a success state
+ *                         together with the resulting value, if the parssing succeeds.
+ */
 model.comparatorFor = function(type) {
     switch(type) {
         case model.NUMBER:

@@ -11,6 +11,12 @@ module.exports = {
     User: User,
     Context: Context,
     Channel: Channel,
+
+    /**
+     * Prepares the database connector to run
+     * @return {Promise}      A Promise that will be resolved whenever the connection is established.
+     *                        Further calls to this function will return a resolved promise.
+     */
     prepare: () => {
         if(connected) {
             return Promise.resolve();
