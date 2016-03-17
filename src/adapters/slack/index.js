@@ -58,15 +58,17 @@ SlackAdapter.prototype = {
         });
     },
     run: function() {
-        logger.debug('Running.');
-        this.rtm.on(RTM_EVENTS.MESSAGE, (message) => {
-            if(message.type !== 'message' || !!message.subtype) { return; }
-            if(message.channel[0] === 'D') {
-                message.text = this.bot.name + ': ' + message.text;
-            }
-            var env = this.makeEnvelope(message.text, message, this.users[message.user], this.channels[message.channel] || this.dms[message.channel]);
-            this.receive(env);
-        });
+        if(!this.messageEventSet) {
+            this.rtm.on(RTM_EVENTS.MESSAGE, (message) => {
+                if(message.type !== 'message' || !!message.subtype) { return; }
+                if(message.channel[0] === 'D') {
+                    message.text = this.bot.name + ': ' + message.text;
+                }
+                var env = this.makeEnvelope(message.text, message, this.users[message.user], this.channels[message.channel] || this.dms[message.channel]);
+                this.receive(env);
+            });
+            this.messageEventSet = true;
+        }
     },
     dmForUser: function(u) {
         if(typeof u !== 'string') {
