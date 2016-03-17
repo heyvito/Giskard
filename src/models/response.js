@@ -1,4 +1,5 @@
-var bot = require('../bot').sharedInstance();
+var bot = require('../bot').sharedInstance(),
+    User = require('./user');
 
 /**
  * Represents an wrapped response object
@@ -90,6 +91,26 @@ Response.prototype = {
      */
     addReaction: function(reactionName) {
         return bot.adapter.addReaction.apply(bot.adapter, [this.envelope, reactionName]);
+    },
+
+    /**
+     * Gets an updated state of the user who sent this message.
+     * @return {Promise}            A Promise that will be resolved whenever the user is found.
+     */
+    getUser: function() {
+        return new Promise((resolve, reject) => {
+            User.findOne({ username: this.user.username })
+                .then(u => {
+                    if(!u) {
+                        reject(new Error('User not found.'));
+                    } else {
+                        resolve(u);
+                    }
+                })
+                .catch(ex => {
+                    reject(ex);
+                });
+        });
     }
 };
 
