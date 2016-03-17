@@ -47,6 +47,9 @@ var Basic = function() {
                 .then((response) => {
                     response.reply('You gave me ' + response.match);
                 });
+        })
+        .respond(/:(heart|yellow_heart|green_heart|blue_heart|purple_heart|heavy_heart_exclamation_mark_ornament|two_hearts|revolving_hearts|heartbeat|heartpulse|sparkling_heart|cupid|gift_heart|heart_decoration):/i, (response) => {
+            response.reply(':kissing_heart:');
         });
 };
 
