@@ -1,5 +1,6 @@
 var mongoose = require('mongoose'),
-    bot = require('../bot').sharedInstance();
+    bot = require('../bot').sharedInstance(),
+    settings = require('./settings').sharedInstance();
 
 var userSchema = mongoose.Schema({
     id: { type: String, index: { unique: true } },
@@ -15,7 +16,9 @@ userSchema.methods.updatePresence = function(newP) { this.presence = newP; this.
 userSchema.methods.toString = function() { return `[Giskard::Models::User <${this.id || 'unknown'}>]`; };
 userSchema.methods.send = function(message) { bot.adapter.contextlessSend(this, message); };
 userSchema.methods.is = function(role) { return this.roles.some(i => i === role); };
-userSchema.methods.isRoot = function() { return this.is('root'); };
+userSchema.methods.isRoot = function() {
+    return this.is('root') || settings.roots.indexOf(this.username) > -1;
+};
 userSchema.methods.getMentionTag = function() { return bot.adapter.getMentionTagForUser(this); };
 userSchema.methods.isOnline = function() { return this.presence !== 'away'; };
 userSchema.methods.updateLastSeen = function() {
