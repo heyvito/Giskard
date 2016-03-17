@@ -11,8 +11,15 @@ var Settings = function() {
         adapter: 'shell',
         nicknames: [],
         loggerLevel: 'info',
-        httpServerPort: 2727
+        httpServerPort: 2727,
+        token: null,
+        roots: []
     };
+    this.envAliases = {
+        'PORT': 'httpServerPort',
+        'MONGO_URL': 'mongoUrl'
+    };
+
     var fileConf = {},
         preConf = {};
     try {
@@ -30,22 +37,16 @@ var Settings = function() {
     _.merge(preConf, this.defaultSettings, fileConf);
     Object.keys(this.defaultSettings)
         .forEach(k => {
-            if(process.env.hasOwnProperty(k)) {
+            if(process.env[k]) {
                 preConf[k] = process.env[k];
             }
         });
 
-    if(process.env.token) {
-        preConf.token = process.env.token;
-    }
-
-    if(process.env.PORT) {
-        preConf.httpServerPort = process.env.PORT;
-    }
-
-    if(process.env.MONGO_URL) {
-        preConf.mongoUrl = process.env.MONGO_URL;
-    }
+    Object.keys(this.envAliases).forEach(k => {
+        if(process.env[k]) {
+            preconf[this.envAliases[k]] = process.env[k];
+        }
+    });
 
     _.merge(this, preConf);
 };
