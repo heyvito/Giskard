@@ -44,7 +44,7 @@ var Settings = function() {
 
     Object.keys(this.envAliases).forEach(k => {
         if(process.env[k]) {
-            preconf[this.envAliases[k]] = process.env[k];
+            preConf[this.envAliases[k]] = process.env[k];
         }
     });
 

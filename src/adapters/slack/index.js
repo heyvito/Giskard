@@ -12,7 +12,7 @@ var SlackAdapter = function(bot) {
     this.users = {};
     this.channels = {};
     this.dms = {};
-    this.dmForUser = {};
+    this.dmMap = {};
 };
 
 SlackAdapter.prototype = {
@@ -27,7 +27,7 @@ SlackAdapter.prototype = {
             this.rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, (data) => {
                 data.ims.forEach(d => {
                     this.dms[d.id] = d;
-                    this.dmForUser[d.user] = d;
+                    this.dmMap[d.user] = d;
                 });
                 this.bot.mentionMarks = [`<@${data.self.id}>`, data.self.name].concat(settings.nicknames);
                 this.bot.name = data.self.name;
@@ -74,7 +74,7 @@ SlackAdapter.prototype = {
         if(typeof u !== 'string') {
             u = u.id;
         }
-        return this.dmForUser[u];
+        return this.dmMap[u];
     },
     channelIdForChannel: function(c) {
         return c.id ? c.id : c;
