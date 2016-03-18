@@ -31,6 +31,11 @@ var Socket = function(parent, s) {
                 this.dbModel = u;
                 this.ready = true;
                 this.s.emit('ready', { id: this.id });
+                this.adapter.io.emit('user_connected', {
+                    username: this.username,
+                    name: this.name,
+                    id: this.id
+                });
             });
         });
 }
