@@ -49,6 +49,9 @@ var Settings = function() {
     });
 
     _.merge(this, preConf);
+
+    // TODO: At this point, iterate preConf and assign readonly properties to `this` scope,
+    // using only getters.
 };
 
 module.exports = new Singleton(Settings);
