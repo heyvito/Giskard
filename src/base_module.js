@@ -3,7 +3,8 @@ var bot = require('./bot').sharedInstance(),
     Context = require('./models/context'),
     rp = require('request-promise'),
     _ = require('lodash'),
-    Cron = require('cron').CronJob;
+    Cron = require('cron').CronJob,
+    mongoose = require('mongoose');
 
 /**
  * Represents the base module to every module
@@ -185,6 +186,27 @@ BaseModule.prototype = {
 
         var job = new Cron(schedule, callback, null, true);
         return this;
+    },
+
+    /**
+     * Registers a new model structure for your module.
+     * @param  {String} name      Name of the model to be registered. On the databbase, this name
+     *                            will be prefixed with your module's file name.
+     * @param  {Object} structure Your model's structure metadata. More information on
+     *                            http://mongoosejs.com/docs/2.7.x/docs/model-definition.html
+     * @return {Mongoose.Model}           A ready-to-use mongoose model connected to Giskard's
+     *                                    database.
+     */
+    registerModel: function(name, structure) {
+        if(!name || typeof name !== 'string') {
+            throw new Error('Expected name to be a String.');
+        }
+        if(!structure || typeof structure !== 'object') {
+            throw new Error('Expected structure to be an Object.');
+        }
+
+        structure = mongoose.Schema(structure);
+        return mongoose.model(`${this._meta.moduleName}__${name}`, channelSchema);
     }
 };
 
