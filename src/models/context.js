@@ -98,8 +98,8 @@ var numberComparator = function(value) {
 };
 
 var booleanComparator = function(value) {
-    var positive = /^(y.*|sim|uhum|s|aff?irmativ(e|o)|positiv(e|o)|1|thumbs_?up|ok_?hand)$/i,
-        negative = /^(no.*|nah|n(ã|a)o|negativ(e|o)|0|thumbs_?down|(n|ñ))$/i;
+    var positive = /^((y.*|sim|uhum|s|aff?irmativ(e|o)|positiv(e|o)|1|:(thumbs_?up|ok_?hand):(:[^:]+:)?)\.?$/i,
+        negative = /^((no.*|nah|n(ã|a)o|negativ(e|o)|0|:thumbs_?down:(:[^:]+:)?|(n|ñ)))\.?$/i;
     if(positive.test(value)) {
         return { valid: true, value: true };
     } else if(negative.test(value)) {
