@@ -11,11 +11,14 @@ var Socket = function(parent, s) {
     this.s
         .on('message', (msg) => {
             if(this.ready) {
+                msg.user = this.dbModel;
+                msg.channel = this.adapter.channelModel;
                 this.adapter.receive(this.adapter.makeEnvelope(msg.text, msg, this, this.channel));
                 this.adapter.io.emit('user_said', msg);
             }
         })
         .on('identify', (msg) => {
+            console.log(msg);
             this.username = msg.username;
             this.name = msg.name;
             this.id = '__debug_user' + crypto.createHash('md5').update(this.username).digest('hex');

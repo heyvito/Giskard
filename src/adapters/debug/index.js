@@ -1,4 +1,7 @@
 var express = require('express'),
+    swig = require('swig'),
+    consolidate = require('consolidate'),
+    Path = require('path'),
     socketio = require('socket.io'),
     HTTP = require('http');
 
@@ -9,7 +12,13 @@ var BaseAdapter = require('../../base_adapter'),
 
 var DebugAdapter = function(bot) {
     BaseAdapter.call(this, bot);
-    this.express = express();
+    this.express = express()
+        .use(express.static(Path.join(__dirname, 'public')))
+        .set('views', Path.join(__dirname, 'views'))
+        .engine('html', consolidate.swig)
+        .get('/', (req, res) => {
+            res.render('channel/index.html');
+        });
     this.http = HTTP.Server(this.express);
     this.io = new socketio(this.http);
     this.users = [];
@@ -25,12 +34,15 @@ DebugAdapter.prototype = {
             this.bot.mentionMarks = ['@giskard', 'giskard', 'bot'];
             this.bot.name = 'giskard';
 
-            this.db.Channel.fromSlack({
+            this.db.Channel.fromSlackData({
                 id: this.channelName,
                 name: 'debug',
                 is_archived: false,
                 is_member: true
-            }).then(resolve).catch(reject);
+            }).then((c) => {
+                this.channelModel = c;
+                resolve();
+            }).catch(reject);
         });
     },
     run: function() {
@@ -39,7 +51,7 @@ DebugAdapter.prototype = {
         });
     },
     dmForUser: function(u) {
-        if(typeof u !== 'string') {
+        if (typeof u !== 'string') {
             u = u.id;
         }
         return u;
@@ -51,7 +63,9 @@ DebugAdapter.prototype = {
         return '@' + user.username;
     },
     removeMessage: function(messageId, channel) {
-        this.io.emit('delete_message', { ts: messageId });
+        this.io.emit('delete_message', {
+            ts: messageId
+        });
         return Promise.resolve()
     },
     messageShouldBeUsedInContext: function(envelope) {
@@ -61,21 +75,31 @@ DebugAdapter.prototype = {
         this.io.emit('bot_is_typing');
     },
     addReaction: function(envelope, reaction) {
-        this.io.emit('add_reaction_to', { id: envelope.message.ts, reaction: reaction });
+        this.io.emit('add_reaction_to', {
+            id: envelope.message.ts,
+            reaction: reaction
+        });
         return Promise.resolve();
     },
     contextlessSend: function(target, string) {
         var what;
-        if(target.indexOf('____debug_user') === 0) {
+        if (target.indexOf('____debug_user') === 0) {
             what = 'user';
         } else {
             what = 'channel';
         }
-        this.io.emit('bot_said', { to: what, message: string, target: target });
+        this.io.emit('bot_said', {
+            to: what,
+            message: string,
+            target: target
+        });
         return Promise.resolve();
     },
     send: function(envelope, string) {
-        this.io.emit('bot_said', { to: 'channel', message: string });
+        this.io.emit('bot_said', {
+            to: 'channel',
+            message: string
+        });
         return Promise.resolve();
     },
     reply: function(envelope, string) {

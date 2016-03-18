@@ -1,5 +1,6 @@
 (function() {
 
+    var socket = io();
     var chat = {
         messageToSend: '',
         messageResponses: [
@@ -55,7 +56,7 @@
         },
 
         addMessage: function() {
-            this.messageToSend = this.$textarea.val()
+            this.messageToSend = this.$textarea.val();
             this.render();
         },
         addMessageEnter: function(event) {
@@ -98,5 +99,39 @@
     };
 
     searchFilter.init();
+
+    $('#login').submit(function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var name = $('#name').val();
+        var username = $('#username').val();
+        var msg = {
+            "name": name,
+            "username": username
+        };
+        console.log(msg);
+        socket.emit('identify', msg);
+        return false;
+    });
+
+    socket.on('ready', function(msg) {
+            $('.login').fadeOut();
+            $('body').attr('id', msg.id);
+        })
+        .on('delete_message', function(msg) {
+            console.log('delete_message', msg);
+        })
+        .on('bot_is_typing', function(msg) {
+            console.log('bot_is_typing', msg);
+        })
+        .on('add_reaction_to', function(msg) {
+            console.log('add_reaction_to', msg);
+        })
+        .on('bot_said', function(msg) {
+            console.log('bot_said', msg);
+        })
+        .on('user_said', function(msg) {
+            console.log('user_said', msg);
+        });
 
 })();

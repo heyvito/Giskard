@@ -7,12 +7,39 @@ $gray: #92959E;
 *:before,
 *:after {
     box-sizing: border-box;
+    font: 14px/22px "Lato", Arial, sans-serif;
 }
 body {
     background: #C5DDEB;
     font: 14px/20px "Lato", Arial, sans-serif;
     padding: 40px 0;
     color: white;
+}
+.login {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 999;
+    form {
+        width: 300px;
+        margin: 50px auto;
+        input {
+            width: 100%;
+            border: none;
+            border-radius: 5px;
+            margin: 0px 0px 5px 0px;
+            padding: 5px;
+            font-size:15px;
+        }
+        button{
+            float:right;
+            border-radius: 5px;
+            border:none;
+        }
+    }
 }
 .container {
     margin: 0 auto;
