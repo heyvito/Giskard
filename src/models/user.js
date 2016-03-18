@@ -130,7 +130,8 @@ userSchema.ask = function(message, type) {
  * @method
  */
 userSchema.methods.setRole = function(role) {
-    if(this.roles.some(i => i.toLowerCase() === role.toLowerCase())) {
+    role = role.toLowerCase();
+    if(this.roles.indexOf(role) > -1) {
         return Promise.resolve(this);
     } else {
         this.roles.push(role);
