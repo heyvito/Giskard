@@ -7,6 +7,7 @@
  * @param {AnyObject}   message Original adapter message object.
  * @param {AnyObject}   user    User who sent this message.
  * @param {AnyObject}   channel Channel where this message was sent.
+ * @constructor
  */
 var Envelope = function(text, message, user, channel) {
     this.text = text;

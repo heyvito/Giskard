@@ -11,6 +11,9 @@ var channelSchema = mongoose.Schema({
 /**
  * Returns the Channel descrption. Useful during debug.
  * @return {String}     Channel description.
+ * @memberOf Channel
+ * @method toString
+ * @instance
  */
 channelSchema.methods.toString = function() { return `[Giskard::Models::Channel <${this.id}>]`; };
 
@@ -19,6 +22,9 @@ channelSchema.methods.toString = function() { return `[Giskard::Models::Channel 
  * @param  {String}         Message to be sent to the channel.
  * @return {Promise}        A Promise that will be either resolved or rejected when the message is
  *                          sent or fails to be sent.
+ * @memberOf Channel
+ * @method send
+ * @instance
  */
 channelSchema.methods.send = function(message) { return bot.adapter.contextlessSend(this, message); };
 
@@ -27,6 +33,9 @@ channelSchema.methods.send = function(message) { return bot.adapter.contextlessS
  * @param  {AnyObject}  objData     Received Channel descriptor from Slack
  * @return {Promise}                A Promise that will be resolved or rejected when the channel
  *                                  has been created or updated.
+ * @memberOf Channel
+ * @method fromSlackData
+ * @static
  */
 channelSchema.statics.fromSlackData = function(objData) {
 
@@ -42,4 +51,9 @@ channelSchema.statics.fromSlackData = function(objData) {
     return this.findOneAndUpdate({ id: cData.id }, cData, { new: true, upsert: true });
 };
 
+/**
+ * Represents a Channel stored in the database.
+ * @name Channel
+ * @constructor
+ */
 module.exports = mongoose.model('Channel', channelSchema);
