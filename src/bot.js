@@ -1,8 +1,7 @@
 var EventEmitter = require('events'),
     Path = require('path'),
     fs = require('fs'),
-    Singleton = require('./utils/singleton'),
-    events = require('./utils/events');
+    Singleton = require('./utils/singleton');
 
 var Bot = function() {
     [
