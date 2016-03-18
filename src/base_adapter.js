@@ -183,7 +183,17 @@ BaseAdapter.prototype = {
      *                                  depends on the current Adapter being used and will be rejected
      *                                  by default.
      */
-    addReaction: function(envelope, reaction) { return Promise.reject(); }
+    addReaction: function(envelope, reaction) { return Promise.reject(); },
+
+    /**
+     * Gets a channel ID for a given user identifier. If not overriden, returns the same
+     * input ID. Useful if the chat source uses a diferent identifier to direct messages.
+     * @param  {AnyObject}  userID  User identifier to be crossed against the possible adapter
+     *                              DM list source.
+     * @return {AnyObject}          An object that represents the channel ID for a user direct
+     *                              message channel.
+     */
+    dmForUser: function(userID) { return userId; }
 };
 
 /**
