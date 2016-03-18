@@ -29,6 +29,9 @@
         render: function() {
             this.scrollToBottom();
             if (this.messageToSend.trim() !== '') {
+
+                socket.emit('message', {"text": this.$textarea.val()});
+
                 var template = Handlebars.compile($("#message-template").html());
                 var context = {
                     messageOutput: this.messageToSend,
