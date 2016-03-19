@@ -41,9 +41,16 @@ var Socket = function(parent, s) {
                 deleted: false,
                 presence: 'active',
             }).then(u => {
+                this.s.emit('ready', {
+                    id: this.id,
+                    userList: this.adapter.users.map(u => (u.dbModel ? {
+                        username: u.username,
+                        name: u.name,
+                        id: this.id
+                    } : null)).filter(i => i)
+                });
                 this.dbModel = u;
                 this.ready = true;
-                this.s.emit('ready', { id: this.id });
                 this.adapter.io.emit('user_connected', {
                     username: this.username,
                     name: this.name,
