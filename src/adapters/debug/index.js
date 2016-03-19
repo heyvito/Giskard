@@ -77,22 +77,20 @@ DebugAdapter.prototype = {
         return Promise.resolve();
     },
     contextlessSend: function(target, string) {
-        var what;
-        if (target.indexOf('__debug_user') === 0) {
+        var what,
+            channel = null;
+        if (target.indexOf && target.indexOf('__debug_user') === 0) {
             what = 'user';
         } else {
             what = 'channel';
+            channel = target.name;
         }
-        logger.debug({
-            to: what,
-            message: string,
-            target: target
-        });
         var ts = Date.now();
         this.io.emit('bot_said', {
             to: what,
             message: string,
             target: target,
+            channel: channel,
             ts: ts
         });
         this.checkForMetadata(string, ts);
@@ -127,6 +125,14 @@ DebugAdapter.prototype = {
             .then((meta) => {
                 this.io.emit('extra_metadata', meta);
             });
+    },
+    searchChannel: function(nameOrId) {
+        var c = new this.db.Channel({
+            name: nameOrId,
+            id: nameOrId,
+        });
+        c.save = function() { };
+        return Promise.resolve(c);
     }
 };
 
