@@ -158,7 +158,7 @@ $(function() {
                     if(inB && !inC) {
                         result.push(i.replace('&gt;', '').trimLeft() + '<br/>');
                     } else if(!inB && inC) {
-                        result.push(i);
+                        result.push(i + '\n');
                     } else {
                         result.push(i + '<br/>');
                     }
