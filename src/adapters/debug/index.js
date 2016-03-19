@@ -89,23 +89,27 @@ DebugAdapter.prototype = {
             message: string,
             target: target
         });
+        var ts = Date.now();
         this.io.emit('bot_said', {
             to: what,
             message: string,
-            target: target
+            target: target,
+            ts: ts
         });
-        return Promise.resolve();
+        return Promise.resolve({ ts: ts });
     },
     send: function(envelope, string) {
+        var ts = Date.now();
         this.io.emit('bot_said', {
             to: 'channel',
-            message: string
+            message: string,
+            ts: ts
         });
         logger.debug({
             to: 'channel',
             message: string
         });
-        return Promise.resolve();
+        return Promise.resolve({ ts: ts });
     },
     reply: function(envelope, string) {
         var breaksLine = string.trim()[0] === '>' ? '\n' : ' ';
