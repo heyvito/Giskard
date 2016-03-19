@@ -1,140 +1,110 @@
 (function() {
-
-    var socket = io();
-    var chat = {
-        messageToSend: '',
-        messageResponses: [
-            'Why did the web developer leave the restaurant? Because of the table layout.',
-            'How do you comfort a JavaScript bug? You console it.',
-            'An SQL query enters a bar, approaches two tables and asks: "May I join you?"',
-            'What is the most used language in programming? Profanity.',
-            'What is the object-oriented way to become wealthy? Inheritance.',
-            'An SEO expert walks into a bar, bars, pub, tavern, public house, Irish pub, drinks, beer, alcohol'
-        ],
+    window.chat = {
         init: function() {
-            this.cacheDOM();
-            this.bindEvents();
-            this.render();
+            this.chatLog = $('.chat-history');
+            this.chatLogList = this.chatLog.find('ul');
+            this.sendButton = $('button');
+            this.textArea = $('#message-to-send');
+            this.sendButton.on('click', this.sendMessage.bind(this));
+            this.textArea.on('keyup', this.sendMessageReturn.bind(this));
+            this.responseTemplateContent = $('#message-response-template').html();
+            this.userMessageTemplateContent = $("#message-template").html();
+            this.loginForm = $('#login');
+            this.loginForm.submit(this.performLogin.bind(this));
+            this.typingIndicator = $('#typing');
+            this.socket = io();
+            this.socket
+                .on('ready', this.socketReady.bind(this))
+                .on('delete_message', this.deleteMessage.bind(this))
+                .on('bot_is_typing', this.botIsTyping.bind(this))
+                .on('add_reaction_to', this.addReactionTo.bind(this))
+                .on('bot_said', this.processBotMessage.bind(this))
+                .on('user_said', this.appendResponse.bind(this))
+                .on('user_connected', this.userConnected.bind(this));
         },
-        cacheDOM: function() {
-            this.$chatHistory = $('.chat-history');
-            this.$button = $('button');
-            this.$textarea = $('#message-to-send');
-            this.$chatHistoryList = this.$chatHistory.find('ul');
+        performLogin: function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.socket.emit('identify', {
+                name:       $('#name').val(),
+                username:   $('#username').val()
+            });
+            return false;
         },
-        bindEvents: function() {
-            this.$button.on('click', this.addMessage.bind(this));
-            this.$textarea.on('keyup', this.addMessageEnter.bind(this));
-        },
-        render: function() {
-            this.scrollToBottom();
-            if (this.messageToSend.trim() !== '') {
-
-                socket.emit('message', {"text": this.$textarea.val()});
-
-                var template = Handlebars.compile($("#message-template").html());
-                var context = {
-                    messageOutput: this.messageToSend,
-                    time: this.getCurrentTime()
-                };
-
-                this.$chatHistoryList.append(template(context));
-                this.scrollToBottom();
-                this.$textarea.val('');
-
-                // responses
-                var templateResponse = Handlebars.compile($("#message-response-template").html());
-                var contextResponse = {
-                    response: this.getRandomItem(this.messageResponses),
-                    time: this.getCurrentTime()
-                };
-
-                setTimeout(function() {
-                    this.$chatHistoryList.append(templateResponse(contextResponse));
-                    this.scrollToBottom();
-                }.bind(this), 1500);
-
+        sendMessageReturn: function(e) {
+            if(e.keyCode === 13) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.sendMessage();
+                return false;
             }
-
         },
-
-        addMessage: function() {
-            this.messageToSend = this.$textarea.val();
-            this.render();
-        },
-        addMessageEnter: function(event) {
-            // enter was pressed
-            if (event.keyCode === 13) {
-                this.addMessage();
+        sendMessage: function() {
+            var v = this.textArea.val().trim();
+            if(v.length) {
+                this.socket.emit('message', { text: v, ts: Date.now() });
+                this.textArea.val('');
             }
         },
         scrollToBottom: function() {
-            this.$chatHistory.scrollTop(this.$chatHistory[0].scrollHeight);
+            this.chatLog.scrollTop(this.chatLog[0].scrollHeight);
         },
-        getCurrentTime: function() {
-            return new Date().toLocaleTimeString().
-            replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3");
-        },
-        getRandomItem: function(arr) {
-            return arr[Math.floor(Math.random() * arr.length)];
-        }
+        appendResponse: function(incomingMessage) {
+            console.log('appendResponse', incomingMessage);
+            var context = {
+                time: new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3"),
+                ts: incomingMessage.ts,
+                response: incomingMessage.text
+            };
+            var template;
 
+            if(incomingMessage.user.id === this.userId) {
+                context.from = 'You';
+                template = this.userMessageTemplateContent;
+            } else {
+                context.from = incomingMessage.user.username;
+                template = this.responseTemplateContent;
+            }
+            this.chatLogList.append(Mustache.render(template, context));
+            this.scrollToBottom();
+        },
+        socketReady: function(msg) {
+            this.userId = msg.id;
+            $('.login').fadeOut(300, function() {
+                this.textArea.focus();
+            }.bind(this));
+        },
+        deleteMessage: function(msg) {
+            console.log('deleteMessage', msg);
+            $('[data-ts="' + msg.ts + '"]').fadeOut(300, function() {
+                $(this).remove();
+            });
+        },
+        botIsTyping: function() {
+            this.typingIndicator.fadeIn(300);
+        },
+        addReactionTo: function(msg) {
+            console.log('addReactionTo', msg);
+        },
+        processBotMessage: function(msg) {
+            this.typingIndicator.fadeOut(300);
+            if(msg.to === 'channel' && !msg.channel) {
+                this.appendResponse({
+                    ts: msg.ts,
+                    text: msg.message,
+                    user: {
+                        username: 'Giskard'
+                    }
+                });
+            } else {
+                console.log('processBotMessage', msg);
+            }
+        },
+        userConnected: function(msg) {
+            console.log('userConnected', msg);
+            /* username, name, id */
+        }
     };
 
     chat.init();
-
-    var searchFilter = {
-        options: {
-            valueNames: ['name']
-        },
-        init: function() {
-            var userList = new List('people-list', this.options);
-            var noItems = $('<li id="no-items-found">No items found</li>');
-
-            userList.on('updated', function(list) {
-                if (list.matchingItems.length === 0) {
-                    $(list.list).append(noItems);
-                } else {
-                    noItems.detach();
-                }
-            });
-        }
-    };
-
-    searchFilter.init();
-
-    $('#login').submit(function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var name = $('#name').val();
-        var username = $('#username').val();
-        var msg = {
-            "name": name,
-            "username": username
-        };
-        console.log(msg);
-        socket.emit('identify', msg);
-        return false;
-    });
-
-    socket.on('ready', function(msg) {
-            $('.login').fadeOut();
-            $('body').attr('id', msg.id);
-        })
-        .on('delete_message', function(msg) {
-            console.log('delete_message', msg);
-        })
-        .on('bot_is_typing', function(msg) {
-            console.log('bot_is_typing', msg);
-        })
-        .on('add_reaction_to', function(msg) {
-            console.log('add_reaction_to', msg);
-        })
-        .on('bot_said', function(msg) {
-            console.log('bot_said', msg);
-        })
-        .on('user_said', function(msg) {
-            console.log('user_said', msg);
-        });
-
 })();
