@@ -126,6 +126,9 @@ body {
         height: 575px;
         .message-data {
             margin-bottom: 15px;
+            code {
+                color: white;
+            }
         }
         .message-data-time {
             color: lighten($gray, 8%);
@@ -163,6 +166,41 @@ body {
                 border-bottom-color: $blue;
                 left: 98%;
             }
+        }
+        blockquote {
+            border-left: 5px solid rgba(0, 0, 0, 0.2);
+            padding-left: 5px;
+            border-radius: 3px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+        }
+
+        strong {
+            font-weight: bold;
+        }
+
+        code {
+            font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            padding: 0.2em;
+            margin: 0;
+            font-size: 85%;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        em {
+            font-style: italic;
+        }
+
+        pre.preform {
+            font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            padding: 16px;
+            overflow: auto;
+            font-size: 85%;
+            line-height: 1.45;
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+            word-wrap: normal;
         }
     }
     .chat-message {
@@ -228,4 +266,13 @@ body {
     content: " ";
     clear: both;
     height: 0;
+}
+
+i.fa.fa-circle {
+    display: inline-block;
+    background-color: rgb(166, 201, 165);
+    height: 9px;
+    width:  9px;
+    border-radius: 50%;
+    vertical-align: middle;
 }
