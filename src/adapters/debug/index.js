@@ -49,10 +49,7 @@ DebugAdapter.prototype = {
         });
     },
     dmForUser: function(u) {
-        if (typeof u !== 'string') {
-            u = u.id;
-        }
-        return u;
+        return this.channelName;
     },
     channelIdForChannel: function(c) {
         return c.id ? c.id : c;
@@ -81,7 +78,7 @@ DebugAdapter.prototype = {
     },
     contextlessSend: function(target, string) {
         var what;
-        if (target.indexOf('____debug_user') === 0) {
+        if (target.indexOf('__debug_user') === 0) {
             what = 'user';
         } else {
             what = 'channel';
