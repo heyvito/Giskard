@@ -44,8 +44,18 @@ var Sudo = function(bot) {
                         })
                         .catch((ex) => response.reply(`Error: ${ex.message}`));
                 }
+            });
+        })
+        .respond(/sudo abort mission/, (response) => {
+            response.getUser().then(u => {
+                if(u.isRoot()) {
+                    response.reply('```\nFINAL System shutdown message from sudo subsystem.\nSystem going down IMMEDIATELY.\n```');
+                    setTimeout(() => {
+                        process.exit(0);
+                    }, 2000)
+                };
+            });
         });
-    });
 };
 
 Base.setup(Sudo);
