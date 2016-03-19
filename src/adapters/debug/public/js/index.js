@@ -25,6 +25,10 @@ $(function() {
                 .on('user_connected', this.userConnected.bind(this))
                 .on('user_disconnected', this.userDisconnected.bind(this))
                 .on('extra_metadata', this.extraMetadata.bind(this));
+            if(window.localStorage) {
+                $('#name').val(window.localStorage.getItem('lastName'));
+                $('#username').val(window.localStorage.getItem('lastUser'));
+            }
         },
         addUser: function(user) {
             if ($('[data-user-id="' + user.id + '"]').length === 0) {
@@ -34,10 +38,16 @@ $(function() {
         performLogin: function(e) {
             e.preventDefault();
             e.stopPropagation();
+            var n = $('#name').val(),
+                u = $('#username').val();
             this.socket.emit('identify', {
-                name:       $('#name').val(),
-                username:   $('#username').val()
+                name:       n,
+                username:   u
             });
+            if(window.localStorage) {
+                window.localStorage.setItem('lastName', n);
+                window.localStorage.setItem('lastUser', u);
+            }
             return false;
         },
         sendMessageReturn: function(e) {
