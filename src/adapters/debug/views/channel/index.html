@@ -63,7 +63,12 @@
     <script id="message-response-template" type="text/x-handlebars-template">
         <li data-ts="{{ ts }}">
             <div class="message-data">
+                {{#channel}}
+                <span class="message-data-name"><i class="fa fa-circle online"></i>{{from}}, on channel <code>{{channel}}</code></span>
+                {{/channel}}
+                {{^channel}}
                 <span class="message-data-name"><i class="fa fa-circle online"></i>{{from}}</span>
+                {{/channel}}
                 <span class="message-data-time">{{time}}, Today</span>
             </div>
             <div class="message my-message">
