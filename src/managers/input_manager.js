@@ -39,6 +39,8 @@ InputManager.prototype = {
         }
         this.listeners.every((listener) => {
             try {
+                logger.debug('Handing envelope to listener: ');
+                logger.debug(envelope);
                 listener.call(envelope);
                 if(envelope.stopPropagation) {
                     return false;

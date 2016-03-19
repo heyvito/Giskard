@@ -30,11 +30,9 @@
     "request-promise": "^2.0.1"
   },
   "devDependencies": {
-    "consolidate": "^0.14.0",
     "jscs": "^2.11.0",
     "jsdoc": "^3.4.0",
     "jshint": "^2.9.1",
-    "socket.io": "^1.4.5",
-    "swig": "^1.4.2"
+    "socket.io": "^1.4.5"
   }
 }

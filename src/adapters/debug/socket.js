@@ -10,11 +10,13 @@ var Socket = function(parent, s) {
 
     this.s
         .on('message', (msg) => {
+            console.log('ready: ', this.ready);
             if(this.ready) {
                 msg.user = this.dbModel;
                 msg.channel = this.adapter.channelModel;
-                this.adapter.receive(this.adapter.makeEnvelope(msg.text, msg, this, this.channel));
                 this.adapter.io.emit('user_said', msg);
+                var message = this.adapter.bot.name + ': ' + msg.text;
+                this.adapter.receive(this.adapter.makeEnvelope(message, msg, this, this.channel));
             }
         })
         .on('identify', (msg) => {

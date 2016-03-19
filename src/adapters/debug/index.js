@@ -1,6 +1,4 @@
 var express = require('express'),
-    swig = require('swig'),
-    consolidate = require('consolidate'),
     Path = require('path'),
     socketio = require('socket.io'),
     HTTP = require('http');
@@ -14,10 +12,8 @@ var DebugAdapter = function(bot) {
     BaseAdapter.call(this, bot);
     this.express = express()
         .use(express.static(Path.join(__dirname, 'public')))
-        .set('views', Path.join(__dirname, 'views'))
-        .engine('html', consolidate.swig)
         .get('/', (req, res) => {
-            res.render('channel/index.html');
+            res.sendfile(__dirname + '/views/channel/index.html');
         });
     this.http = HTTP.Server(this.express);
     this.io = new socketio(this.http);
@@ -66,7 +62,7 @@ DebugAdapter.prototype = {
         this.io.emit('delete_message', {
             ts: messageId
         });
-        return Promise.resolve()
+        return Promise.resolve();
     },
     messageShouldBeUsedInContext: function(envelope) {
         return true;
@@ -88,6 +84,11 @@ DebugAdapter.prototype = {
         } else {
             what = 'channel';
         }
+        logger.debug({
+            to: what,
+            message: string,
+            target: target
+        });
         this.io.emit('bot_said', {
             to: what,
             message: string,
@@ -97,6 +98,10 @@ DebugAdapter.prototype = {
     },
     send: function(envelope, string) {
         this.io.emit('bot_said', {
+            to: 'channel',
+            message: string
+        });
+        logger.debug({
             to: 'channel',
             message: string
         });
