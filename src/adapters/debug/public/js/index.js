@@ -27,7 +27,6 @@ $(function() {
                 .on('extra_metadata', this.extraMetadata.bind(this));
         },
         addUser: function(user) {
-            console.log(('[data-user-id="' + user.id + '"]'));
             if ($('[data-user-id="' + user.id + '"]').length === 0) {
                 this.userList.append(Mustache.render(this.userConnectedTemplate, user));
             }
@@ -60,7 +59,6 @@ $(function() {
             this.chatLog.scrollTop(this.chatLog[0].scrollHeight);
         },
         appendResponse: function(incomingMessage) {
-            console.log('appendResponse', incomingMessage);
             var context = {
                 time: new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3"),
                 ts: incomingMessage.ts,
@@ -86,7 +84,6 @@ $(function() {
             msg.userList.forEach(this.addUser.bind(this));
         },
         deleteMessage: function(msg) {
-            console.log('deleteMessage', msg);
             $('[data-ts="' + msg.ts + '"]').fadeOut(300, function() {
                 $(this).remove();
             });
@@ -113,15 +110,12 @@ $(function() {
             this.scrollToBottom();
         },
         userConnected: function(msg) {
-            console.log('userConnected', msg);
             this.addUser(msg);
         },
         userDisconnected: function(msg) {
-            console.log('userDisconnected', msg);
             $('[data-user-id="' + msg.id + '"]').remove();
         },
         extraMetadata: function(msg) {
-            console.log('extraMetadata', msg);
             var _this = this;
             $('[data-ts="' + msg.ts + '"]').find('.message').append('<br /><a href="' + msg.value + '" target="_blank"><img style="max-width:100%" src="' + msg.value + '" /></a>').find('img').load(function() {
                 _this.scrollToBottom();
