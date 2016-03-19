@@ -6,7 +6,8 @@ var express = require('express'),
 
 var BaseAdapter = require('../../base_adapter'),
     logger = require('../../utils/logger')('DebugAdapter'),
-    SocketModel = require('./socket');
+    SocketModel = require('./socket'),
+    UrlChecker = require('./url_checker');
 
 var DebugAdapter = function(bot) {
     BaseAdapter.call(this, bot);
@@ -19,6 +20,7 @@ var DebugAdapter = function(bot) {
     this.io = new socketio(this.http);
     this.users = [];
     this.channelName = '__debug_channel';
+    this.urlChecker = new UrlChecker();
 }
 
 DebugAdapter.prototype = {
@@ -96,6 +98,7 @@ DebugAdapter.prototype = {
             target: target,
             ts: ts
         });
+        this.checkForMetadata(string, ts);
         return Promise.resolve({ ts: ts });
     },
     send: function(envelope, string) {
@@ -109,12 +112,24 @@ DebugAdapter.prototype = {
             to: 'channel',
             message: string
         });
+        this.checkForMetadata(string, ts);
         return Promise.resolve({ ts: ts });
     },
     reply: function(envelope, string) {
         var breaksLine = string.trim()[0] === '>' ? '\n' : ' ';
         string = '@' + envelope.user.username + ':' + breaksLine + string;
         return this.send(envelope, string);
+    },
+    checkForMetadata: function(text, ts) {
+        var proms = [];
+        (text + '').replace(/(https?:\/\/[^\s]+)/g, (u) => {
+            proms.push(this.urlChecker.checkUrl(u));
+            return '';
+        });
+        Promise.race(proms)
+            .then((meta) => {
+                this.io.emit('extra_metadata', meta);
+            });
     }
 };
 
