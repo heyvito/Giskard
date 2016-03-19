@@ -16,6 +16,8 @@ var Socket = function(parent, s) {
             if(this.id) {
                 this.adapter.io.emit('user_disconnected', { id: this.id });
             }
+
+            this.adapter.users.splice(this.adapter.users.indexOf(this), 1);
         })
         .on('message', (msg) => {
             console.log('ready: ', this.ready);
@@ -46,7 +48,7 @@ var Socket = function(parent, s) {
                     userList: this.adapter.users.map(u => (u.dbModel ? {
                         username: u.username,
                         name: u.name,
-                        id: this.id
+                        id: u.id
                     } : null)).filter(i => i)
                 });
                 this.dbModel = u;
@@ -61,6 +63,7 @@ var Socket = function(parent, s) {
                 console.log(err);
             })
         });
+        return this;
 }
 
 module.exports = Socket;

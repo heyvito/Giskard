@@ -1,4 +1,4 @@
-(function() {
+$(function() {
     window.chat = {
         init: function() {
             this.chatLog = $('.chat-history');
@@ -23,7 +23,14 @@
                 .on('bot_said', this.processBotMessage.bind(this))
                 .on('user_said', this.appendResponse.bind(this))
                 .on('user_connected', this.userConnected.bind(this))
+                .on('user_disconnected', this.userDisconnected.bind(this))
                 .on('extra_metadata', this.extraMetadata.bind(this));
+        },
+        addUser: function(user) {
+            console.log(('[data-user-id="' + user.id + '"]'));
+            if ($('[data-user-id="' + user.id + '"]').length === 0) {
+                this.userList.append(Mustache.render(this.userConnectedTemplate, user));
+            }
         },
         performLogin: function(e) {
             e.preventDefault();
@@ -76,6 +83,7 @@
             $('.login').fadeOut(300, function() {
                 this.textArea.focus();
             }.bind(this));
+            msg.userList.forEach(this.addUser.bind(this));
         },
         deleteMessage: function(msg) {
             console.log('deleteMessage', msg);
@@ -106,8 +114,11 @@
         },
         userConnected: function(msg) {
             console.log('userConnected', msg);
-            this.userList.append(Mustache.render(this.userConnectedTemplate, msg));
-            /* username, name, id */
+            this.addUser(msg);
+        },
+        userDisconnected: function(msg) {
+            console.log('userDisconnected', msg);
+            $('[data-user-id="' + msg.id + '"]').remove();
         },
         extraMetadata: function(msg) {
             console.log('extraMetadata', msg);
@@ -115,9 +126,8 @@
             $('[data-ts="' + msg.ts + '"]').find('.message').append('<br /><a href="' + msg.value + '" target="_blank"><img style="max-width:100%" src="' + msg.value + '" /></a>').find('img').load(function() {
                 _this.scrollToBottom();
             });
-            /* username, name, id */
         }
     };
     $('#typing').fadeOut(0);
     chat.init();
-})();
+});
