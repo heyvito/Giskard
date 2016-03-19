@@ -62,7 +62,8 @@ $(function() {
             var context = {
                 time: new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3"),
                 ts: incomingMessage.ts,
-                response: incomingMessage.text
+                response: this.formatText(incomingMessage.text),
+                channel: incomingMessage.channel
             };
             var template;
 
@@ -96,17 +97,14 @@ $(function() {
         },
         processBotMessage: function(msg) {
             this.typingIndicator.fadeOut(300);
-            if(msg.to === 'channel' && !msg.channel) {
-                this.appendResponse({
-                    ts: msg.ts,
-                    text: msg.message,
-                    user: {
-                        username: 'Giskard'
-                    }
-                });
-            } else {
-                console.log('processBotMessage', msg);
-            }
+            this.appendResponse({
+                ts: msg.ts,
+                text: msg.message,
+                channel: msg.channel,
+                user: {
+                    username: 'Giskard'
+                }
+            });
             this.scrollToBottom();
         },
         userConnected: function(msg) {
@@ -120,6 +118,54 @@ $(function() {
             $('[data-ts="' + msg.ts + '"]').find('.message').append('<br /><a href="' + msg.value + '" target="_blank"><img style="max-width:100%" src="' + msg.value + '" /></a>').find('img').load(function() {
                 _this.scrollToBottom();
             });
+        },
+        formatText: function(txt) {
+            txt = txt
+                .replace(/>/g, '&gt;')
+                .replace(/</g, '&lt;')
+                .replace(/@([a-zA-Z1-9_]+)/g, function(s, m) {
+                    return '@<u>' + m + '</u>';
+                })
+                .replace(/\*([^\n]+)\*/g, function(s, m) {
+                    return '<strong>' + m + '</strong>';
+                })
+                .replace(/_([^\n]+)_/g, function(s, m) {
+                    return '<em>' + m + '</em>';
+                })
+                .replace(/`([^`\n]+)`/g, function(s, m) {
+                    return '<code>' + m + '</code>';
+                })
+                .split('\n');
+            var result = [],
+                inB = false,
+                inC = false;
+            txt.forEach(function(i) {
+                if(i.indexOf('&gt;') === 0 && !inB && !inC) {
+                    result.push('<blockquote>' + i.replace('&gt;', '').trimLeft() + '<br/>');
+                    inB = true;
+                } else if(i.indexOf('&gt;') === -1 && inB && !inC) {
+                    result.push('</blockquote><br/>');
+                    result.push(i + '<br/>');
+                    inB = false;
+                } else if(i === '```') {
+                    inC = !inC;
+                    if(inC) {
+                        result.push('<pre class="preform">');
+                    } else {
+                        result.push('</pre>');
+                    }
+                } else {
+                    if(inB && !inC) {
+                        result.push(i.replace('&gt;', '').trimLeft() + '<br/>');
+                    } else if(!inB && inC) {
+                        result.push(i);
+                    } else {
+                        result.push(i + '<br/>');
+                    }
+                }
+            });
+
+            return result.join('').replace(/<br\/><br\/>/g, '<br/>');
         }
     };
     $('#typing').fadeOut(0);
