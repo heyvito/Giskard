@@ -9,7 +9,7 @@ var Socket = function(parent, s) {
     this.ready = false;
 
     this.s
-        .on('disconnect', function(){
+        .on('disconnect', () => {
             if(this.dbModel) {
                 this.dbModel.updatePresence('away');
             }
