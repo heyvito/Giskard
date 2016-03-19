@@ -9,6 +9,14 @@ var Socket = function(parent, s) {
     this.ready = false;
 
     this.s
+        .on('disconnect', function(){
+            if(this.dbModel) {
+                this.dbModel.updatePresence('away');
+            }
+            if(this.id) {
+                this.adapter.io.emit('user_disconnected', { id: this.id });
+            }
+        })
         .on('message', (msg) => {
             console.log('ready: ', this.ready);
             if(this.ready) {
@@ -26,7 +34,7 @@ var Socket = function(parent, s) {
             this.id = '__debug_user' + crypto.createHash('md5').update(this.username).digest('hex');
             this.adapter.db.User.fromSlackData({
                 id: this.id,
-                username: this.username,
+                name: this.username,
                 profile: {
                     real_name: this.name
                 },
@@ -41,7 +49,10 @@ var Socket = function(parent, s) {
                     name: this.name,
                     id: this.id
                 });
-            });
+            })
+            .catch((err) => {
+                console.log(err);
+            })
         });
 }
 

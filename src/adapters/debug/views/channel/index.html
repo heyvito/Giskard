@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Chat with Giskard</title>
     <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel='stylesheet prefetch' href='https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css'>
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -24,15 +25,6 @@
                     <img src="https://avatars.slack-edge.com/2016-03-12/26386839104_b50938fcbd31ff9fe8e5_192.jpg" width="55" alt="avatar" />
                     <div class="about">
                         <div class="name">Giskard</div>
-                        <div class="status">
-                            <i class="fa fa-circle online"></i> online
-                        </div>
-                    </div>
-                </li>
-                <li class="clearfix">
-                    <img src="http://funnne.com/w-img/user.jpg" width="55" alt="avatar" />
-                    <div class="about">
-                        <div class="name">You</div>
                         <div class="status">
                             <i class="fa fa-circle online"></i> online
                         </div>
@@ -78,6 +70,17 @@
             </div>
             <div class="message my-message">
                 {{{response}}}
+            </div>
+        </li>
+    </script>
+    <script id="user-connected-template" type="text/x-handlebars-template">
+        <li class="clearfix" data-id="{{{id}}}" data-username="{{{username}}}">
+            <img src="http://funnne.com/w-img/user.jpg" width="55" alt="avatar" />
+            <div class="about">
+                <div class="name">{{{name}}} ({{{username}}})</div>
+                <div class="status">
+                    <i class="fa fa-circle online"></i> online
+                </div>
             </div>
         </li>
     </script>

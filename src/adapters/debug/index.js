@@ -123,7 +123,7 @@ DebugAdapter.prototype = {
     checkForMetadata: function(text, ts) {
         var proms = [];
         (text + '').replace(/(https?:\/\/[^\s]+)/g, (u) => {
-            proms.push(this.urlChecker.checkUrl(u));
+            proms.push(this.urlChecker.checkUrl(u, ts));
             return '';
         });
         Promise.race(proms)
