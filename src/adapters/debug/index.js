@@ -103,10 +103,6 @@ DebugAdapter.prototype = {
             message: string,
             ts: ts
         });
-        logger.debug({
-            to: 'channel',
-            message: string
-        });
         this.checkForMetadata(string, ts);
         return Promise.resolve({ ts: ts });
     },
