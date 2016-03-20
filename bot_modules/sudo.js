@@ -6,7 +6,7 @@ var Base = require('../src/base_module');
 
 var Sudo = function(bot) {
     Base.call(this, bot);
-    this.respond(/sudo echo #?([a-z0-9-_]+)\s(.+)$/, (response) => {
+    this.respond(/sudo echo #?([a-z0-9-_]+)\s(.+)/, (response) => {
             response.getUser().then(u => {
                 if(u.isRoot()) {
                     this.searchChannel(response.match[1])
