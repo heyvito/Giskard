@@ -13,7 +13,8 @@ var Settings = function() {
         loggerLevel: 'info',
         httpServerPort: 2727,
         token: null,
-        roots: []
+        roots: [],
+        sentryUri: null
     };
     this.envAliases = {
         'PORT': 'httpServerPort',
