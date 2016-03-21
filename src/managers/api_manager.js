@@ -8,7 +8,7 @@ var express = require('express'),
  */
 var ApiManager = function() {
     this.port = settings.httpServerPort;
-    logger.debug(`Initialised with port: ${this.port}`);
+    logger.info(`Initialised with port: ${this.port}`);
     this.server = express();
     this.server.get('/status', (req, res) => res.send('ok'));
 }
