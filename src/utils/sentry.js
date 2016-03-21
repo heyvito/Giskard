@@ -1,11 +1,14 @@
 var Singleton = require('./singleton'),
     raven = require('raven'),
-    logger = require('./logger')('Sentry');
+    logger = require('./logger')('Sentry'),
+    package = require('../../package.json');
 
 var Sentry = function() {
     var key = (require('../models/settings').sharedInstance()).sentryUri;
     if(key) {
-        this.client = new raven.Client(key);
+        this.client = new raven.Client(key, {
+            release: process.env.GIT_REV || package.version
+        });
         logger.info('Ready.');
     } else {
         this.client = null;
