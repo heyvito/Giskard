@@ -27,6 +27,7 @@
     "mongodb": "^2.1.7",
     "mongoose": "^4.4.7",
     "npmlog": "^2.0.2",
+    "raven": "^0.10.0",
     "request-promise": "^2.0.1"
   },
   "devDependencies": {
