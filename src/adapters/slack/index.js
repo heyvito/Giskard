@@ -45,8 +45,16 @@ SlackAdapter.prototype = {
                         });
                 }));
                 proms = proms.concat(data.users.forEach(u => {
+                    console.log('-------------------------------');
+                    console.log('Calling User.fromSlackData for data:');
+                    console.log(JSON.parse(JSON.stringify(u)));
+                    console.log('-------------------------------');
                     return this.db.User.fromSlackData(u)
                         .then((u) => {
+                            console.log('-------------------------------');
+                            console.log('User.fromSlackData completed for user with id:' + u.id);
+                            console.log(JSON.parse(JSON.stringify(u)));
+                            console.log('-------------------------------');
                             this.users[u.id] = u;
                         });
                 }));
@@ -64,6 +72,10 @@ SlackAdapter.prototype = {
                 if(message.channel[0] === 'D') {
                     message.text = this.bot.name + ': ' + message.text;
                 }
+                console.log('Message received. User:');
+                console.log(message.user);
+                console.log('Users:');
+                console.log(this.users);
                 var env = this.makeEnvelope(message.text, message, this.users[message.user], this.channels[message.channel] || this.dms[message.channel]);
                 this.receive(env);
             });
