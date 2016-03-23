@@ -11,7 +11,7 @@ var Settings = function() {
         adapter: 'shell',
         nicknames: [],
         loggerLevel: 'info',
-        httpServerPort: 2708,
+        httpServerPort: 2709,
         token: null,
         roots: [],
         sentryUri: null

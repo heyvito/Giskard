@@ -44,8 +44,8 @@ DebugAdapter.prototype = {
         });
     },
     run: function() {
-        this.http.listen(2709, () => {
-            logger.warning('DebugAdapter HTTP interface is ready on port 2709');
+        this.http.listen(2708, () => {
+            logger.warning('DebugAdapter HTTP interface is ready on port 2708');
         });
     },
     dmForUser: function(u) {
