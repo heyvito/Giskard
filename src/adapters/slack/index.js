@@ -45,7 +45,7 @@ SlackAdapter.prototype = {
                         });
                 }));
                 proms = proms.concat(data.users.forEach(u => {
-                    this.db.User.fromSlackData(u)
+                    return this.db.User.fromSlackData(u)
                         .then((u) => {
                             this.users[u.id] = u;
                         });
