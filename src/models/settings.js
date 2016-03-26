@@ -8,7 +8,7 @@ var Settings = function() {
     this.rootDir = Path.resolve(Path.join(__dirname, '..', '..'));
     this.defaultSettings = {
         mongoUrl: 'mongodb://localhost:27017/giskard',
-        adapter: 'shell',
+        adapter: 'debug',
         nicknames: [],
         loggerLevel: 'info',
         httpServerPort: 2709,
