@@ -11,7 +11,7 @@ fi
 cp script/stub/settings.json.template settings.json
 echo "There you go. We have just boostrapped a brand new settings.json. Yay!"
 
-if [ $1 == "--dev" ]; then
+if [ "$1" != "--production" ]; then
     echo "Now installing npm deps (including dev), hold tight..."
     npm install
 else
