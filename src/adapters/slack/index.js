@@ -95,6 +95,9 @@ SlackAdapter.prototype = {
         var id;
         if(target.id[0] === 'U') {
             id = this.dmForUser(target.id);
+            if(!!id.id) {
+                id = id.id;
+            }
         } else {
             id = target.id;
         }
