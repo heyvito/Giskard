@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: managers/module_manager.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: managers/module_manager.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var fs = require('fs'),
+    Path = require('path'),
+    logger = require('../utils/logger')('ModuleLoader');
+
+/**
+ * Represents an object capable of loading and handling modules.
+ * @constructor
+ */
+var ModuleManager = function() {
+    this.basePath = Path.resolve(Path.join(__dirname, '..', '..', 'bot_modules'));
+    this.modules = {};
+    this.modulesInfo = {};
+    this.help = [];
+};
+
+ModuleManager.prototype = {
+
+    /**
+     * Parses a module documentation header and commands
+     * @param  {Bot}        bot     The current bot instance
+     * @param  {String}     file    Module file path to be parsed
+     * @return {AnyObject}          An object containing header and commands properties
+     */
+    parseHelp: function(file) {
+        try {
+            var body = fs.readFileSync(file, 'utf-8').split('\n'),
+                header = { name: '', authors: [], created: '' },
+                commands = [],
+                current = null;
+            body = body
+                .slice(0, body.indexOf(''))
+                .filter(l => l.trim().substr(0, 2) === '//')
+                .map(l => l.trim().substr(2).trim())
+                .forEach(l => {
+                    var data;
+                    if(l[0] === '$') {
+                        if(l.indexOf(':') === -1) {
+                            header.name = l.split('$')[1].trim();
+                        } else {
+                            data = l.split(':');
+                            if(data[0].toLowerCase().indexOf('author') > -1) {
+                                header.authors = data[1].trim().split(',').map(a => a.trim());
+                            } else {
+                                header.created = data.slice(1).join(':').trim();
+                            }
+                        }
+                    } else {
+                        if(l[0] === '-') {
+                            if(!!current) {
+                                commands.push(current);
+                            }
+                            data = l.trim().substr(1).trim().split(':');
+                            current = { name: data[0], description: [data[1].trim()] };
+                        } else {
+                            current.description.push(l.trim());
+                        }
+                    }
+                });
+            if(!!current) {
+                commands.push(current);
+            }
+            commands = commands.map(c => {
+                c.description = c.description.join(' ');
+                return c;
+            });
+            logger.debug(`Parsed documentation for ${header.name}`);
+            return {
+                header: header,
+                commands: commands
+            };
+        } catch(ex) {
+            logger.error('Error parsing documentation for ' + file);
+            logger.error(ex);
+            return null;
+        }
+    },
+
+    /**
+     * Reads the modules directory and returns all possible loadable JavaScript files.
+     * @return {String[]}       A list of possibly loadable JavaScript modules.
+     */
+    getModules: function() {
+        return fs.readdirSync(this.basePath)
+            .filter(f => Path.extname(f) === '.js')
+            .map(f => Path.join(this.basePath, f));
+    },
+
+    /**
+     * Loads all possible modules, ignoring failed ones.
+     * Also parses module's documentations and fills metadata required by any subsystem.
+     * @return {Promise}          A Promise that will be resolved whenever all modules have been loaded
+     *                            or failed to load. The resulting list will contain all modules
+     *                            constructors.
+     */
+    loadModules: function() {
+        logger.info('Loading modules...');
+        return new Promise((resolve) => {
+            this.getModules()
+                .forEach(fp => {
+                    try {
+                        var mName = Path.basename(fp, '.js'),
+                            Ctor = require(fp);
+                        Ctor.prototype._meta.moduleName = mName;
+                        this.modules[mName] = new Ctor();
+                        logger.info(`Loaded module: ${mName}`);
+                        var mInfo = this.parseHelp(fp);
+                        if(!!mInfo) {
+                            this.modulesInfo[mInfo.header.name] = mInfo;
+                            this.help = this.help.concat(mInfo.commands.map(c => `${c.name}: ${c.description}`));
+                        }
+                    } catch(ex) {
+                        logger.error(`Error loading module at ${fp}`);
+                        logger.error(ex);
+                    }
+                });
+            resolve();
+        });
+    }
+};
+
+module.exports = ModuleManager;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Adapters.html">Adapters</a></li><li><a href="ApiManager.html">ApiManager</a></li><li><a href="BaseAdapter.html">BaseAdapter</a></li><li><a href="BaseModule.html">BaseModule</a></li><li><a href="Channel.html">Channel</a></li><li><a href="Context.html">Context</a></li><li><a href="ContextManager.html">ContextManager</a></li><li><a href="Envelope.html">Envelope</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="MessageComparator.html">MessageComparator</a></li><li><a href="ModuleManager.html">ModuleManager</a></li><li><a href="Response.html">Response</a></li><li><a href="User.html">User</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Tue Mar 29 2016 19:58:29 GMT-0300 (BRT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
