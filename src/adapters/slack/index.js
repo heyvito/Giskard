@@ -50,6 +50,18 @@ SlackAdapter.prototype = {
                             this.users[u.id] = u;
                         });
                 }));
+                data.users.forEach(u => {
+                    if(!data.ims.some(i => i.user === u.id) && !u.deleted && !u.is_bot) {
+                        logger.verbose(`Acquiring extra data for user ${u.id}`);
+                        var p = this.web.dm.open(u.id)
+                            .then(r => {
+                                logger.verbose(`Acquired extra data for user ${u.id}`);
+                                this.dms[r.channel.id] = { id: r.channel.id };
+                                this.dmMap[u.id] = { id: r.channel.id };
+                            });
+                        proms.push(p);
+                    }
+                });
                 Promise.all(proms)
                     .then(resolve)
                     .catch(reject);
@@ -64,10 +76,6 @@ SlackAdapter.prototype = {
                 if(message.channel[0] === 'D') {
                     message.text = this.bot.name + ': ' + message.text;
                 }
-                console.log('Message received. User:');
-                console.log(message.user);
-                console.log('Users:');
-                console.log(this.users);
                 var env = this.makeEnvelope(message.text, message, this.users[message.user], this.channels[message.channel] || this.dms[message.channel]);
                 this.receive(env);
             });
