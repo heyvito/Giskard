@@ -31,23 +31,6 @@ var Basic = function() {
                 '> 3. Um robô deve proteger sua própria existência desde que tal proteção não entre em conflito com a Primeira ou Segunda Leis.'
             ]).join('\n'));
         })
-        .respond(/hallo!/, (response) => {
-            response.ask('Sprechen Sie Deutsch?', this.Context.BOOLEAN)
-                .then((response) => {
-                    if(response.match) {
-                        response.reply('Gut!');
-                    } else {
-                        response.reply('I though so...');
-                    }
-                })
-                .catch(ex => console.error(ex));
-        })
-        .respond(/ask me a number/, (response) => {
-            response.ask('Well, gimme a number!', this.Context.NUMBER)
-                .then((response) => {
-                    response.reply('You gave me ' + response.match);
-                });
-        })
         .respond(/:(heart|yellow_heart|green_heart|blue_heart|purple_heart|heavy_heart_exclamation_mark_ornament|two_hearts|revolving_hearts|heartbeat|heartpulse|sparkling_heart|cupid|gift_heart|heart_decoration):/i, (response) => {
             response.reply(':kissing_heart:');
         })
