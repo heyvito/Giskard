@@ -45,16 +45,8 @@ SlackAdapter.prototype = {
                         });
                 }));
                 proms = proms.concat(data.users.forEach(u => {
-                    console.log('-------------------------------');
-                    console.log('Calling User.fromSlackData for data:');
-                    console.log(JSON.parse(JSON.stringify(u)));
-                    console.log('-------------------------------');
                     return this.db.User.fromSlackData(u)
                         .then((u) => {
-                            console.log('-------------------------------');
-                            console.log('User.fromSlackData completed for user with id:' + u.id);
-                            console.log(JSON.parse(JSON.stringify(u)));
-                            console.log('-------------------------------');
                             this.users[u.id] = u;
                         });
                 }));
