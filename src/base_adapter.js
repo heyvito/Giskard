@@ -129,6 +129,9 @@ BaseAdapter.prototype = {
      *                                          during the search process.
      */
     searchChannel: function(nameOrId) {
+        if(nameOrId && nameOrId.length > 0 && nameOrId.indexOf('#') === 0) {
+            nameOrId = nameOrId.replace('#', '');
+        }
         return new Promise((resolve, reject) => {
             this.db.Channel.findOne({ $or: [{ name: nameOrId }, { id: nameOrId }] })
             .then((c) => {
@@ -152,6 +155,9 @@ BaseAdapter.prototype = {
      *                                          during the search process.
      */
     searchUser: function(nameOrId) {
+        if(nameOrId && nameOrId.length > 0 && nameOrId.indexOf('@') === 0) {
+            nameOrId = nameOrId.replace('@', '');
+        }
         return new Promise((resolve, reject) => {
             this.db.User.findOne({ $or: [{ username: nameOrId }, { id: nameOrId }] })
             .then((u) => {
