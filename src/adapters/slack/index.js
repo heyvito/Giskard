@@ -124,7 +124,7 @@ SlackAdapter.prototype = {
         if(envelope.channel.id[0] !== 'D') {
             var initialChars = string.trim().substr(0, 3);
             var breaksLine = initialChars.indexOf('>') === 0 || initialChars.indexOf('```') === 0;
-            string = '<@' + envelope.user.id + '>:' + (breaksLine ? '\n' : '') + string;
+            string = '<@' + envelope.user.id + '>:' + (breaksLine ? '\n' : ' ') + string;
         }
         return this.send(envelope, string);
     },
