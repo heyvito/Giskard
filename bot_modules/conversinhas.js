@@ -8,7 +8,7 @@ var Base = require('../src/base_module');
 
 var Conversinhas = function(bot) {
     Base.call(this, bot);
-    this.respond(/(?:manda|envie)(?:\sum) gif (.*) (?:pr(?:a|o)) ([a-z0-9-_]+)$/i, (response) => {
+    this.respond(/(?:manda|envie)(?:\sum) gif (.*) (?:pr(?:a|o)) ([^\s]+)$/i, (response) => {
         var user = response.match[2];
         var term = response.match[1];
 
