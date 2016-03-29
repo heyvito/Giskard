@@ -93,13 +93,15 @@ SlackAdapter.prototype = {
     },
     contextlessSend: function(target, string) {
         var id;
-        if(target.id[0] === 'U') {
+        if(target.id && target.id[0] === 'U') {
             id = this.dmForUser(target.id);
             if(!!id.id) {
                 id = id.id;
             }
-        } else {
+        } else if(target.id) {
             id = target.id;
+        } else {
+            id = target;
         }
         if(!id) {
             logger.warning('Cannot determine target for item:');
