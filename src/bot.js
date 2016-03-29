@@ -2,7 +2,7 @@ var EventEmitter = require('events'),
     Path = require('path'),
     fs = require('fs'),
     Singleton = require('./utils/singleton'),
-    package = require('../package.json');
+    pkg = require('../package.json');
 
 var Bot = function() {
     [
@@ -15,7 +15,7 @@ var Bot = function() {
     ].forEach(i => console.log(i));
     this.events = new EventEmitter();
     this.logger = require('./utils/logger')('Bot', true);
-    this.logger.info(`Giskard version ${package.version}`);
+    this.logger.info(`Giskard version ${pkg.version}`);
     return this;
 };
 
