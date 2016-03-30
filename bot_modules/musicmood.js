@@ -3,14 +3,14 @@
 // $ Created on: Wed Mar 30 03:16:24 UTC 2016
 // - musicmood artista - música: Responde com uma cor e um sentimento
 // - musicmood playlist mood: Responde uma playlist baseada em um sentimento
-// - musicmood list: Mostra todos os meus sentimentos
+// - musicmood lista: Mostra todos os meus sentimentos
 
 var Base = require('../src/base_module');
 
 var Musicmood = function(bot) {
     Base.call(this, bot);
 
-    this.hear(/musicmood list$/i, (response) => {
+    this.hear(/musicmood lista$/i, (response) => {
         response.sendTyping();
         this.http({
                 uri: "http://api.musicmood.me/moods"
