@@ -1,8 +1,8 @@
 // $ Musicmood
 // $ Authors: John
 // $ Created on: Wed Mar 30 03:16:24 UTC 2016
-// - musicmood artista - música: Responde com uma cor e um sentimento
-// - musicmood playlist mood: Responde uma playlist baseada em um sentimento
+// - musicmood <artista> - <música>: Responde com uma cor e um sentimento
+// - musicmood playlist <mood>: Responde uma playlist baseada em um sentimento
 // - musicmood lista: Mostra todos os meus sentimentos
 
 var Base = require('../src/base_module');
