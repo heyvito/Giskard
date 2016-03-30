@@ -19,10 +19,10 @@ var Musicmood = function(bot) {
                 response.send("Enjoy this moods: `" + JSON.parse(moods).moods.map((mood) => {
                     return mood.mood
                 }).join("` `") + "`");
-                response.send("Ask for a playlist with: musicmood playlist `mood`");
+                response.send("Para pedir uma playlist: musicmood playlist `mood`");
             })
             .catch((err) => {
-                response.send("I am not on the mood, sorry :(");
+                response.send("Não achei meus sentimentos, desculpe :(");
             })
     });
 
@@ -36,11 +36,11 @@ var Musicmood = function(bot) {
                 if (url) {
                     response.send(url);
                 } else {
-                    response.send("I do not have this mood, YET :). Try another");
+                    response.send("Não tenho esse sentimento, AINDA :). Tenta outro!");
                 }
             })
             .catch((err) => {
-                response.send("I am not on the mood, sorry :(");
+                response.send("Não achei meus sentimentos, desculpe :(");
             })
     });
 
@@ -64,14 +64,14 @@ var Musicmood = function(bot) {
                         response.send("Mood : `" + mood.mood + "`");
                         response.send("Color: `" + this.rgbToHex(mood.color) + "`");
                     } else {
-                        response.send("Did not found this song, sorry :(");
+                        response.send("Não achei essa música :(");
                     }
                 })
                 .catch((err) => {
-                    response.send("I am not on the mood, sorry :(");
+                    response.send("Não achei meus sentimentos, desculpe :(");
                 })
         } else {
-            response.send("Please, send as `Artist - Song` and i will do my magic!");
+            response.send("Por favor, envie assim: `Artist - Song` que eu faço minha mágica!");
         }
     });
 };
