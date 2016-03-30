@@ -164,6 +164,19 @@ SlackAdapter.prototype = {
                 resolve();
             });
         });
+    },
+    searchChannel: function(nameOrId) {
+        if(nameOrId && nameOrId.indexOf('#') === 0) {
+            nameOrId = nameOrId.replace('#', '');
+        }
+        return BaseAdapter.prototype.searchChannel.apply(this, [nameOrId]);
+    },
+    searchUser: function(nameOrId) {
+        var r = /\<@([^>]+)\>/;
+        if(r.test(nameOrId)) {
+            nameOrId = r.exec(nameOrId)[1];
+        }
+        return BaseAdapter.prototype.searchUser.apply(this, [nameOrId]);
     }
 };
 
