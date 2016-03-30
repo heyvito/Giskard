@@ -207,6 +207,72 @@ BaseModule.prototype = {
 
         structure = mongoose.Schema(structure);
         return mongoose.model(`${this._meta.moduleName}__${name}`, channelSchema);
+    },
+
+    /**
+     * Exposes a GET endpoint on the specified route. Notice the resulting route will be prefixed
+     * with `/api/modulename` where `modulename` represents your class name, lowercased.
+     * @param  {String}   route    Route to be registered
+     * @param  {Function} callback Function to be called when the route is requested. This function
+     *                             receives two arguments: `req` and `res`. Those methods are backed
+     *                             by Express. More information about routing is available on the
+     *                             library documentation.
+     * @return {BaseModule}        The same module instance.
+     * @chainable
+     */
+    exposeGet: function(route, callback) {
+        return this.exposeApi.apply(this, ['get', route, callback]);
+    },
+
+    /**
+     * Exposes a POST endpoint on the specified route. Notice the resulting route will be prefixed
+     * with `/api/modulename` where `modulename` represents your class name, lowercased.
+     * @param  {String}   route    Route to be registered
+     * @param  {Function} callback Function to be called when the route is requested. This function
+     *                             receives two arguments: `req` and `res`. Those methods are backed
+     *                             by Express. More information about routing is available on the
+     *                             library documentation.
+     * @return {BaseModule}        The same module instance.
+     * @chainable
+     */
+    exposePost: function(route, callback) {
+        return this.exposeApi.apply(this, ['post', route, callback]);
+    },
+
+    /**
+     * Exposes a HEAD endpoint on the specified route. Notice the resulting route will be prefixed
+     * with `/api/modulename` where `modulename` represents your class name, lowercased.
+     * @param  {String}   route    Route to be registered
+     * @param  {Function} callback Function to be called when the route is requested. This function
+     *                             receives two arguments: `req` and `res`. Those methods are backed
+     *                             by Express. More information about routing is available on the
+     *                             library documentation.
+     * @return {BaseModule}        The same module instance.
+     * @chainable
+     */
+    exposeHead: function(route, callback) {
+        return this.exposeApi.apply(this, ['head', route, callback]);
+    },
+
+    /**
+     * Exposes an HTTP endpoint on the specified path. Notice the resulting route will be prefixed
+     * with `/api/modulename` where `modulename` represents your class name, lowercased.
+     * @param  {String}   path    Route to be registered
+     * @param {String}    type     Type of the route. Valid values are `get`, `head`, `post`, `put`,
+     *                            `patch`, and `delete`.
+     * @param  {Function} callback Function to be called when the route is requested. This function
+     *                             receives two arguments: `req` and `res`. Those methods are backed
+     *                             by Express. More information about routing is available on the
+     *                             library documentation.
+     * @return {BaseModule}        The same module instance.
+     * @chainable
+     */
+    exposeApi: function(type, path, callback) {
+        var r = /(?:\/*)(.*)/;
+        path = r.exec(path)[1];
+        path = `/api/${this._meta.className.toLowerCase()}/${path}`;
+        this.bot.httpApi.addRoute(type, path, callback);
+        return this;
     }
 };
 
