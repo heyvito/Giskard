@@ -1,9 +1,9 @@
 // $ Musicmood
 // $ Authors: John
 // $ Created on: Wed Mar 30 03:16:24 UTC 2016
-// - musicmood artist - song: Send a mood and a color based on Musicmood
-// - musicmood playlist mood: Send a playlist with the sent mood
-// - musicmood list: list all the available moods
+// - musicmood artista - música: Responde com uma cor e um sentimento
+// - musicmood playlist mood: Responde uma playlist baseada em um sentimento
+// - musicmood list: Mostra todos os meus sentimentos
 
 var Base = require('../src/base_module');
 
@@ -16,7 +16,7 @@ var Musicmood = function(bot) {
                 uri: "http://api.musicmood.me/moods"
             })
             .then((moods) => {
-                response.send("Enjoy this moods: `" + JSON.parse(moods).moods.map((mood) => {
+                response.send("Meus sentimentos: `" + JSON.parse(moods).moods.map((mood) => {
                     return mood.mood
                 }).join("` `") + "`");
                 response.send("Para pedir uma playlist: musicmood playlist `mood`");
@@ -60,9 +60,9 @@ var Musicmood = function(bot) {
                 .then((mood) => {
                     var mood = JSON.parse(mood);
                     if (!mood.error) {
-                        response.send(`Music: ${query[0]} - ${query[1]}`);
-                        response.send("Mood : `" + mood.mood + "`");
-                        response.send("Color: `" + this.rgbToHex(mood.color) + "`");
+                        response.send(`Música    : ${query[0]} - ${query[1]}`);
+                        response.send("Sentimento: `" + mood.mood + "`");
+                        response.send("Cor       : `" + this.rgbToHex(mood.color) + "`");
                     } else {
                         response.send("Não achei essa música :(");
                     }
@@ -71,7 +71,7 @@ var Musicmood = function(bot) {
                     response.send("Não achei meus sentimentos, desculpe :(");
                 })
         } else {
-            response.send("Por favor, envie assim: `Artist - Song` que eu faço minha mágica!");
+            response.send("Por favor, envie assim: `Artista - Música` que eu faço minha mágica!");
         }
     });
 };
