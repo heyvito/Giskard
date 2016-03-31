@@ -34,7 +34,8 @@ var Basic = function() {
         .respond(/:(heart|yellow_heart|green_heart|blue_heart|purple_heart|heavy_heart_exclamation_mark_ornament|two_hearts|revolving_hearts|heartbeat|heartpulse|sparkling_heart|cupid|gift_heart|heart_decoration):/i, (response) => {
             response.reply(':kissing_heart:');
         })
-        .respond(/ping/i, (response) => response.reply('Pong!'));
+        .respond(/ping/i, (response) => response.reply('Pong!'))
+        .respond(/destroy humans/i, (response) => response.reply('http://i.imgur.com/ZBDqbO1.gif'));
 };
 
 Base.setup(Basic);
