@@ -206,7 +206,7 @@ BaseModule.prototype = {
         }
 
         structure = mongoose.Schema(structure);
-        return mongoose.model(`${this._meta.moduleName}__${name}`, channelSchema);
+        return mongoose.model(`${this._meta.moduleName}__${name}`, structure);
     },
 
     /**
