@@ -273,6 +273,16 @@ BaseModule.prototype = {
         path = `/api/${this._meta.className.toLowerCase()}/${path}`;
         this.bot.httpApi.addRoute(type, path, callback);
         return this;
+    },
+
+    /**
+     * Gets a mention tag for the given user.
+     * @param  {User}   user    User object to generate the tag from.
+     * @return {String}         A string representing the tag that mentions the
+     *                          user, considering the current adapter mechanics.
+     */
+    getMentionTagForUser: function() {
+        return bot.adapter.getMentionTagForUser.apply(this.bot.adapter, arguments);
     }
 };
 
