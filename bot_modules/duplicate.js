@@ -11,18 +11,19 @@ var Duplicate = function(bot) {
         username: String,
         channel: String
     });
-    this.hear(/(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig, (response) => {
+    this.hear(/((https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig, (response) => {
         var link = response.match[1];
         var username = response.user.username;
         var channel = response.channel.name;
         var whitelist = ['random', 'general', 'aleatorio', 'r2d3-dev'];
-        if (whitelist.indexOf(channel) > -1) {
+        if (whitelist.indexOf(channel) === -1) {
+            response.allowPropagation();
+        } else {
             Links.findOne({
                 link: link
             }, (err, result) => {
                 if (!err) {
                     if (result) {
-                        console.log('found', result);
                         if (username === result.username && channel !== result.channel) {
                             response.reply(`Old! *Você mesmo* já postou este link no #${result.channel}`);
                         } else if (username === result.username && channel === result.channel) {
