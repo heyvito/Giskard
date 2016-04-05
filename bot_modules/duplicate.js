@@ -25,9 +25,9 @@ var Duplicate = function(bot) {
                 if (!err) {
                     if (result) {
                         if (username === result.username && channel !== result.channel) {
-                            response.reply(`Old! *Você mesmo* já postou este link no #${result.channel}`);
+                            response.reply(`Old! *Você mesmo* já postou este link no #${result.channel}! :snail:`);
                         } else if (username === result.username && channel === result.channel) {
-                            response.reply(`Old! *Você mesmo* já postou este link aqui!`);
+                            response.reply(`Old! *Você mesmo* já postou este link aqui! :snail:`);
                         } else if (username !== result.username && channel === result.channel) {
                             response.reply(`Old! @${result.username} ja postou este link aqui! :snail:`);
                         } else {
