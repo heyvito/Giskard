@@ -1,7 +1,6 @@
 // $ Duplicate
 // $ Authors: John
 // $ Created on: Sat Apr  2 01:21:11 UTC 2016
-// - Recurrent link: Eu verifico se existem links repetidos!
 
 var Base = require('../src/base_module');
 
@@ -16,28 +15,33 @@ var Duplicate = function(bot) {
         var link = response.match[1];
         var username = response.user.username;
         var channel = response.channel.name;
-        var search = Links.findOne({
-            link: link
-        }, (err, result) => {
-            if (!err) {
-                if (result) {
-                    console.log('found', result);
-                    if (username === result.username && channel !== result.channel) {
-                        response.reply(`Você já postou este link no #${result.channel}`);
-                    } else if (username === result.username && channel === result.channel) {
-                        response.reply(`Você já postou este link aqui!`);
+        var whitelist = ['random', 'general', 'aleatorio', 'r2d3-dev'];
+        if (whitelist.indexOf(channel) > -1) {
+            Links.findOne({
+                link: link
+            }, (err, result) => {
+                if (!err) {
+                    if (result) {
+                        console.log('found', result);
+                        if (username === result.username && channel !== result.channel) {
+                            response.reply(`Old! *Você mesmo* já postou este link no #${result.channel}`);
+                        } else if (username === result.username && channel === result.channel) {
+                            response.reply(`Old! *Você mesmo* já postou este link aqui!`);
+                        } else if (username !== result.username && channel === result.channel) {
+                            response.reply(`Old! @${result.username} ja postou este link aqui! :snail:`);
+                        } else {
+                            response.reply(`Old! @${result.username} ja postou este link no #${result.channel}! :snail:`);
+                        }
                     } else {
-                        response.reply(`Ei! @${result.username} ja postou este link no #${result.channel}!`);
+                        Links.create({
+                            link: link,
+                            username: username,
+                            channel: channel
+                        });
                     }
-                } else {
-                    Links.create({
-                        link: link,
-                        username: username,
-                        channel: channel
-                    });
                 }
-            }
-        });
+            });
+        }
     });
 };
 
