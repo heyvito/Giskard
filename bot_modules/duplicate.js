@@ -29,9 +29,9 @@ var Duplicate = function(bot) {
                         } else if (username === result.username && channel === result.channel) {
                             response.reply(`Old! *Você mesmo* já postou este link aqui! :snail:`);
                         } else if (username !== result.username && channel === result.channel) {
-                            response.reply(`Old! @${result.username} ja postou este link aqui! :snail:`);
+                            response.reply(`Old! ${this.getMentionTagForUser(result.username)} ja postou este link aqui! :snail:`);
                         } else {
-                            response.reply(`Old! @${result.username} ja postou este link no #${result.channel}! :snail:`);
+                            response.reply(`Old! ${this.getMentionTagForUser(result.username)} ja postou este link no #${result.channel}! :snail:`);
                         }
                     } else {
                         Links.create({
