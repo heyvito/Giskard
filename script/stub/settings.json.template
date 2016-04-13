@@ -1,5 +1,5 @@
 {
-    "logLevel": "info",
+    "loggerLevel": "info",
     "adapter": "debug",
     "token": null,
     "nicknames": []
