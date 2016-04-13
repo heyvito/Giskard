@@ -257,9 +257,9 @@ BaseModule.prototype = {
     /**
      * Exposes an HTTP endpoint on the specified path. Notice the resulting route will be prefixed
      * with `/api/modulename` where `modulename` represents your class name, lowercased.
-     * @param  {String}   path    Route to be registered
      * @param {String}    type     Type of the route. Valid values are `get`, `head`, `post`, `put`,
      *                            `patch`, and `delete`.
+     * @param  {String}   path    Route to be registered
      * @param  {Function} callback Function to be called when the route is requested. This function
      *                             receives two arguments: `req` and `res`. Those methods are backed
      *                             by Express. More information about routing is available on the
@@ -271,7 +271,7 @@ BaseModule.prototype = {
         var r = /(?:\/*)(.*)/;
         path = r.exec(path)[1];
         path = `/api/${this._meta.className.toLowerCase()}/${path}`;
-        this.bot.httpApi.addRoute(type, path, callback);
+        this.bot.apiManager.addRoute(type, path, callback);
         return this;
     },
 
