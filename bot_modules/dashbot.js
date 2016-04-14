@@ -1,9 +1,8 @@
 // $ Dashbot
 // $ Authors: john
 // $ Created on: Tue Apr 12 17:09:46 BRT 2016
-// - Test: This is a sample command description that will be parsed
-// and shown to users when they request help. Make sure to document
-// every command your module provides.
+// - posta no dashbot o titulo [titulo], com a descricao [descricao], com a duracao [duracao], e a imagem [url_da_imagem]
+// - Onde subir imagems: https://imgsafe.org/
 
 var Base = require('../src/base_module');
 
