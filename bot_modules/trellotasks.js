@@ -13,8 +13,7 @@
 var Base 	= require('../src/base_module'),
 	Trello 	= require("node-trello");
 
-var t = new Trello( process.env.TRELLO_KEY , process.env.TRELLO_TOKEN);
-
+var t = new Trello( process.env.trellotasks_key , process.env.trellotasks_token);
 var checkModel 	= [ "Segunda", "Terça", "Quarta", "Quinta", "Sexta"];
 
 //Global
