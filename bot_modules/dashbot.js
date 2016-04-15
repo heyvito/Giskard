@@ -1,8 +1,10 @@
 // $ Dashbot
 // $ Authors: john
 // $ Created on: Tue Apr 12 17:09:46 BRT 2016
-// - posta no dashbot o titulo [titulo], com a descricao [descricao], com a duracao [duracao], e a imagem [url_da_imagem]
-// - Onde subir imagems: https://imgsafe.org/
+// - Postar: posta no dashbot o titulo <titulo>, com a descricao <descricao>, com a duracao <numero de dias>, e a imagem <url>
+// - Listar: listar todos os posts do dashbot
+// - deletar: deleta o post <titulo> do dashbot
+// - Imagehost: usar o imgsafe.org
 
 var Base = require('../src/base_module');
 
@@ -57,6 +59,46 @@ var Dashbot = function(bot) {
             });
         }
     });
+
+    this.respond(/listar todos os posts do dashbot$/i, (response) => {
+        var posts = '';
+        Posts.find({
+            "due": {
+                $gte: new Date()
+            }
+        }, (err, result) => {
+            if (result.length > 0) {
+                result.forEach((item) => {
+                    posts = posts + 'Titulo:' + item.title + '\n';
+                    response.reply('Tenho estes posts:\n```' + posts + '```');
+                })
+            } else {
+                response.reply('Não tem nenhum post cadastrado no dashbot!');
+            }
+
+        });
+    });
+
+    this.respond(/deleta o post (.*) do dashbot$/i, (response) => {
+        var post = response.match[1];
+        response.user.ask('Tem certeza que deseja deletar o `' + post + '` ?', 2)
+            .then((result) => {
+                if (result.match) {
+                    Posts.findOneAndRemove({
+                        "title": post
+                    }, (err) => {
+                        if (err) {
+                            response.reply('Não achei este post :fearful:');
+                        } else {
+                            response.reply('Post removido com sucesso! :ok_hand:');
+                        }
+                    });
+                } else {
+                    response.reply('Tudo bem, vou manter ele ativo :parrot:');
+                }
+            })
+    });
+
 };
 
 Base.setup(Dashbot, 'Dashbot');
