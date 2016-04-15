@@ -1,9 +1,10 @@
 // $ Dashbot
 // $ Authors: john
 // $ Created on: Tue Apr 12 17:09:46 BRT 2016
-// - Test: This is a sample command description that will be parsed
-// and shown to users when they request help. Make sure to document
-// every command your module provides.
+// - posta no dashbot o titulo <titulo>, com a descricao <descricao>, com a duracao <numero de dias>, e a imagem <url>: Faz um post no dashbot
+// - listar todos os posts do dashbot: Lista todos os posts ativos do dashbot
+// - deleta o post <titulo> do dashbot: Deleta um post do dashbot
+// - Imagehost: usar o imgsafe.org
 
 var Base = require('../src/base_module');
 
@@ -58,6 +59,46 @@ var Dashbot = function(bot) {
             });
         }
     });
+
+    this.respond(/listar todos os posts do dashbot$/i, (response) => {
+        var posts = '';
+        Posts.find({
+            "due": {
+                $gte: new Date()
+            }
+        }, (err, result) => {
+            if (result.length > 0) {
+                result.forEach((item) => {
+                    posts = posts + 'Titulo:' + item.title + '\n';
+                    response.reply('Tenho estes posts:\n```' + posts + '```');
+                })
+            } else {
+                response.reply('Não tem nenhum post cadastrado no dashbot!');
+            }
+
+        });
+    });
+
+    this.respond(/deleta o post (.*) do dashbot$/i, (response) => {
+        var post = response.match[1];
+        response.user.ask('Tem certeza que deseja deletar o `' + post + '` ?', 2)
+            .then((result) => {
+                if (result.match) {
+                    Posts.findOneAndRemove({
+                        "title": post
+                    }, (err) => {
+                        if (err) {
+                            response.reply('Não achei este post :fearful:');
+                        } else {
+                            response.reply('Post removido com sucesso! :ok_hand:');
+                        }
+                    });
+                } else {
+                    response.reply('Tudo bem, vou manter ele ativo :parrot:');
+                }
+            })
+    });
+
 };
 
 Base.setup(Dashbot, 'Dashbot');
