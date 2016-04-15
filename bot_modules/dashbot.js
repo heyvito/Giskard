@@ -1,9 +1,9 @@
 // $ Dashbot
 // $ Authors: john
 // $ Created on: Tue Apr 12 17:09:46 BRT 2016
-// - Postar: posta no dashbot o titulo <titulo>, com a descricao <descricao>, com a duracao <numero de dias>, e a imagem <url>
-// - Listar: listar todos os posts do dashbot
-// - deletar: deleta o post <titulo> do dashbot
+// - posta no dashbot o titulo <titulo>, com a descricao <descricao>, com a duracao <numero de dias>, e a imagem <url>: Faz um post no dashbot
+// - listar todos os posts do dashbot: Lista todos os posts ativos do dashbot
+// - deleta o post <titulo> do dashbot: Deleta um post do dashbot
 // - Imagehost: usar o imgsafe.org
 
 var Base = require('../src/base_module');
