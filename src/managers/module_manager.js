@@ -80,9 +80,35 @@ ModuleManager.prototype = {
      * @return {String[]}       A list of possibly loadable JavaScript modules.
      */
     getModules: function() {
-        return fs.readdirSync(this.basePath)
-            .filter(f => Path.extname(f) === '.js')
-            .map(f => Path.join(this.basePath, f));
+        var files = [],
+            folders = [];
+        fs.readdirSync(this.basePath)
+            .forEach(f => {
+                try {
+                    var path = Path.join(this.basePath, f),
+                        stat = fs.statSync(path);
+                    if(stat.isDirectory()) {
+                        folders.push(path);
+                    } else if(stat.isFile() && Path.extname(f) === '.js') {
+                        files.push(path);
+                    }
+                } catch(ex) {
+                    logger.error('Error analysing module structure:');
+                    logger.error(ex);
+                }
+            });
+        folders.forEach(f => {
+            try {
+                var entrypoint = Path.join(f, `${Path.basename(f)}.js`);
+                if(fs.existsSync(entrypoint) && fs.statSync(entrypoint).isFile()) {
+                    files.push(entrypoint);
+                }
+            } catch(ex) {
+                logger.error('Error analysing folder hierarchy:');
+                logger.error(ex);
+            }
+        });
+        return files;
     },
 
     /**
