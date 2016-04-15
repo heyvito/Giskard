@@ -70,8 +70,8 @@ var Dashbot = function(bot) {
             if (result.length > 0) {
                 result.forEach((item) => {
                     posts = posts + 'Titulo:' + item.title + '\n';
-                    response.reply('Tenho estes posts:\n```' + posts + '```');
-                })
+                });
+                response.reply('Tenho estes posts:\n```' + posts + '```');
             } else {
                 response.reply('Não tem nenhum post cadastrado no dashbot!');
             }
