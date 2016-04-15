@@ -27,6 +27,7 @@
     "jshint": "^2.9.1",
     "mongodb": "^2.1.7",
     "mongoose": "^4.4.7",
+    "node-trello": "^1.1.2",
     "npmlog": "^2.0.2",
     "raven": "^0.10.0",
     "request-promise": "^2.0.1"
