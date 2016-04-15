@@ -1,23 +1,20 @@
 // $ trelloTasks
 // $ Authors: Zeh
 // $ Created on: Mon Apr  4 22:04:38 BRT 2016
-// - Test: This is a sample command description that will be parsed
-// and shown to users when they request help. Make sure to document
-// every command your module provides.
+// - trello card: Me(r2d3) will create your week trello card
 
 // Tasks
 //-------------
 // Check error
 // Give some feedback if not find user
 // Random anwsers when finish the process
+// Add new checklist mode options
 
 var Base 	= require('../src/base_module'),
 	Trello 	= require("node-trello");
 
-//Add R2D3 profile and get the API key
-var t = new Trello("6e3b510ead1a6e515e6ebc6754944c0c", "7e13a9db81b180b51b8b3068a78d6a291ff909c5bf813ed29d55f0f59a304fe7");
+var t = new Trello( process.env.TRELLO_KEY , process.env.TRELLO_TOKEN);
 
-//Add new checklist mode options
 var checkModel 	= [ "Segunda", "Terça", "Quarta", "Quinta", "Sexta"];
 
 //Global
