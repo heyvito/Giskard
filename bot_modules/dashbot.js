@@ -31,6 +31,7 @@ var Dashbot = function(bot) {
         });
     })
     this.respond(/(?:posta|poste) no dashbot o t(?:í|i)tulo (.*), com a descri(?:ç|c)(?:ã|a)o (.*), com a dura(?:ç|c)(?:ã|a)o (.*), e a imagem (.*)$/i, (response) => {
+        response.sendTyping();
         var title = response.match[1],
             description = response.match[2],
             duration = response.match[3],
@@ -61,6 +62,7 @@ var Dashbot = function(bot) {
     });
 
     this.respond(/listar todos os posts do dashbot$/i, (response) => {
+        response.sendTyping();
         var posts = '';
         Posts.find({
             "due": {
@@ -80,6 +82,7 @@ var Dashbot = function(bot) {
     });
 
     this.respond(/deleta o post (.*) do dashbot$/i, (response) => {
+        response.sendTyping();
         var post = response.match[1];
         response.user.ask('Tem certeza que deseja deletar o `' + post + '` ?', 2)
             .then((result) => {
