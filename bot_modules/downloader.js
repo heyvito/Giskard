@@ -46,8 +46,7 @@ var Downloader = function(bot) {
             .then(function(results) {
                 if (results.length > 0) {
                     var max = 3;
-                    results = results.slice(0, 3);
-                    results.map((torrent) => {
+                    results.slice(0, 3).map((torrent) => {
                         if (max > 0) {
                             var str = "";
                             str += torrent.name + " (" + torrent.size + ")\n";
