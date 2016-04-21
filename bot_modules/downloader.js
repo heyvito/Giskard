@@ -1,5 +1,5 @@
 // $ Downloader
-// $ Authors: vagrant
+// $ Authors: John
 // $ Created on: Thu Apr 21 13:56:28 UTC 2016
 // - quero baixar o filme <nome>: entrega links diretos para baixar
 // - quero baixar o arquivo <nome>: procura torrents com o nome fornecido
@@ -34,6 +34,7 @@ var Downloader = function(bot) {
                 }
             })
             .catch((err) => {
+                this.logger.error(err);
                 response.send("Não consigo buscar este filme agora, desculpe :(");
             })
     });
@@ -45,7 +46,8 @@ var Downloader = function(bot) {
             .then(function(results) {
                 if (results.length > 0) {
                     var max = 3;
-                    results.forEach((torrent) => {
+                    results = results.slice(0, 3);
+                    results.map((torrent) => {
                         if (max > 0) {
                             var str = "";
                             str += torrent.name + " (" + torrent.size + ")\n";
@@ -61,7 +63,7 @@ var Downloader = function(bot) {
                     response.send("Não consegui achar este arquivo, desculpe :(");
                 }
             }).catch(function(err) {
-                console.log(err);
+                this.logger.error(err);
                 response.send("Não consigo buscar este filme agora, desculpe :(");
             });
     });
