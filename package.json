@@ -29,7 +29,8 @@
     "mongoose": "^4.4.7",
     "npmlog": "^2.0.2",
     "raven": "^0.10.0",
-    "request-promise": "^2.0.1"
+    "request-promise": "^2.0.1",
+    "thepiratebay": "^0.2.6"
   },
   "devDependencies": {
     "file-type": "^3.8.0",
