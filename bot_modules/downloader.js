@@ -24,7 +24,7 @@ var Downloader = function(bot) {
                         str += movie.title_english + " (" + movie.year + ")\n";
                         str += "```\n";
                         movie.torrents.forEach((torrent) => {
-                            str += torrent.quality + " (" + torrent.size + "): " + torrent.url + "\n";
+                            str += torrent.quality + " (" + torrent.size + ", "+ torrent.seeds +" seeder(s)): " + torrent.url + "\n";
                         })
                         str += "```";
                         response.send(str);
@@ -49,7 +49,7 @@ var Downloader = function(bot) {
                     results.slice(0, 3).map((torrent) => {
                         if (max > 0) {
                             var str = "";
-                            str += torrent.name + " (" + torrent.size + ")\n";
+                            str += torrent.name + " (" + torrent.size + ", "+torrent.seeders+" seeder(s))\n";
                             str += "```\n";
                             str += "Link: " + torrent.link + "\n";
                             str += "MagnetLink: " + torrent.magnetLink
