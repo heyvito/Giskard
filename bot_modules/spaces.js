@@ -45,15 +45,17 @@ var Spaces = function(bot) {
             phrase = defaultPhrase;
         }
         if (phrase !== defaultPhrase) {
-            var _this = this;
             response.getUser().then(u => {
-                _this.searchChannel('general')
+                this.searchChannel('general')
                     .then((c) => {
-                        c.send(`Galera, ${_this.getMentionTagForUser(u)} ${phrase} :rocket:`);
-                        response.reply('Done. :rocket:');
+                        c.send(`Galera, ${this.getMentionTagForUser(u)} ${phrase} :rocket:`);
+                        response.reply('Pronto! :rocket:');
                     })
                     .catch((ex) => {
-                        response.reply('Não consegui te colocar de spaces, o @joaomarcus não deixou. :neutral_face:');
+                        this.searchUser('joaomarcus')
+                        .then((u) => {
+                            response.reply(`Não consegui te colocar de spaces, o ${this.getMentionTagForUser(u)} não deixou. :neutral_face:`);
+                        })
                     });
             });
         } else {
