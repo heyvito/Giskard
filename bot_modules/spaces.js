@@ -53,9 +53,9 @@ var Spaces = function(bot) {
                     })
                     .catch((ex) => {
                         this.searchUser('joaomarcus')
-                        .then((u) => {
-                            response.reply(`Não consegui te colocar de spaces, o ${this.getMentionTagForUser(u)} não deixou. :neutral_face:`);
-                        })
+                            .then((u) => {
+                                response.reply(`Não consegui te colocar de spaces, o ${this.getMentionTagForUser(u)} não deixou. :neutral_face:`);
+                            })
                     });
             });
         } else {
