@@ -52,7 +52,7 @@ var Spaces = function(bot) {
                         response.reply('Pronto! :rocket:');
                     })
                     .catch((ex) => {
-                        this.searchUser('joaomarcus')
+                        this.searchUser('joaomarcos')
                             .then((u) => {
                                 response.reply(`Não consegui te colocar de spaces, o ${this.getMentionTagForUser(u)} não deixou. :neutral_face:`);
                             })
