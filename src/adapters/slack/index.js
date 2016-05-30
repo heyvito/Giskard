@@ -32,18 +32,22 @@ SlackAdapter.prototype = {
                 this.bot.mentionMarks = [`<@${data.self.id}>`, data.self.name].concat(settings.nicknames);
                 this.bot.name = data.self.name;
                 var proms = [];
-                proms = proms.concat(data.channels.map(c => {
-                    return this.db.Channel.fromSlackData(c)
-                        .then((c) => {
-                            this.channels[c.id] = c;
-                        });
-                }));
-                proms = proms.concat(data.groups.forEach(g => {
-                    return this.db.Channel.fromSlackData(g)
-                        .then((g) => {
-                            this.channels[g.id] = g;
-                        });
-                }));
+                proms = proms.concat(data.channels
+                    .filter(c => !c.is_archived)
+                    .map(c => {
+                        return this.db.Channel.fromSlackData(c)
+                            .then((c) => {
+                                this.channels[c.id] = c;
+                            });
+                    }));
+                proms = proms.concat(data.groups
+                    .filter(g => !g.is_archived)
+                    .forEach(g => {
+                        return this.db.Channel.fromSlackData(g)
+                            .then((g) => {
+                                this.channels[g.id] = g;
+                            });
+                    }));
                 proms = proms.concat(data.users.forEach(u => {
                     return this.db.User.fromSlackData(u)
                         .then((u) => {
