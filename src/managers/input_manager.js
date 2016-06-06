@@ -58,7 +58,7 @@ InputManager.prototype = {
      * @return {InputManager}       This manager instance.
      * @chainable
      */
-    registerMentionInputHandler: function(regex, callback) {
+    registerMentionInputHandler: function(moduleName, regex, callback) {
         var re = regex.toString().split('/');
         re.shift();
         var modifiers = re.pop();
@@ -73,7 +73,7 @@ InputManager.prototype = {
             name = this.escapeRegex(bot.name),
             alias = bot.mentionMarks.map(m => this.escapeRegex(m)).join(aliasSeparator),
             newRegex = new RegExp(['^\\s*(?:', alias, aliasSeparator, name, '[:,]?)\\s*(?:', pattern, ')'].join(''), modifiers);
-        this.listeners.push(new MessageComparator(newRegex, callback));
+        this.listeners.push(new MessageComparator(moduleName, newRegex, callback));
         return this;
     },
 
@@ -87,8 +87,8 @@ InputManager.prototype = {
      * @return {Bot}                    This Bot instance
      * @chainable
      */
-    registerInputHandler: function(regex, callback) {
-        this.listeners.push(new MessageComparator(regex, callback));
+    registerInputHandler: function(moduleName, regex, callback) {
+        this.listeners.push(new MessageComparator(moduleName, regex, callback));
     },
 
     /**
@@ -122,6 +122,41 @@ InputManager.prototype = {
                 .some(a => data.indexOf(a.toLowerCase()) === 0);
         }
         return result;
+    },
+
+    /**
+     * Suspends a set of comparators of a given module
+     * @param  {String} name Name of the module to be suspended
+     * @return {undefined}      Nothing
+     * @since 2.0
+     */
+    suspendComparatorsForModuleNamed: function(name) {
+        this.listeners
+            .filter(l => l.moduleName === name)
+            .forEach(l => l.setSuspensionState(true));
+    },
+
+    /**
+     * Resumes a set of comparators of a given module
+     * @param  {String} name Name of the module to be resumed
+     * @return {undefined}      Nothing
+     * @since 2.0
+     */
+    resumeComparatorsForModuleNamed: function(name) {
+        this.listeners
+            .filter(l => l.moduleName === name)
+            .forEach(l => l.setSuspensionState(false));
+    },
+
+    /**
+     * Removes all comparators of a given module
+     * @param  {String} name Name of the module to have its comprators removed
+     * @return {undefined}      Nothing
+     * @since 2.0
+     */
+    purgeComparatorsForModuleNamed: function(name) {
+        this.listeners = this.listeners
+            .filter(l => l.moduleName !== name)
     }
 };
 
