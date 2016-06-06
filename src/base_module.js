@@ -47,7 +47,9 @@ BaseModule.prototype = {
      * @chainable
      */
     respond: function() {
-        bot.inputManager.registerMentionInputHandler.apply(bot.inputManager, arguments);
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift(this.getModuleName());
+        bot.inputManager.registerMentionInputHandler.apply(bot.inputManager, args);
         return this;
     },
 
@@ -63,7 +65,9 @@ BaseModule.prototype = {
      * @chainable
      */
     hear: function() {
-        bot.inputManager.registerInputHandler.apply(bot.inputManager, arguments);
+        var args = Array.prototype.slice.call(arguments);
+        args.unshift(this.getModuleName());
+        bot.inputManager.registerInputHandler.apply(bot.inputManager, args);
         return this;
     },
 
