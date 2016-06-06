@@ -212,7 +212,7 @@ BaseModule.prototype = {
         }
 
         structure = mongoose.Schema(structure);
-        return mongoose.model(`${this._meta.moduleName}__${name}`, structure);
+        return mongoose.model(`${this.getModuleName()}__${name}`, structure);
     },
 
     /**
