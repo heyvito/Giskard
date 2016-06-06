@@ -95,7 +95,7 @@ SlackAdapter.prototype = {
     channelIdForChannel: function(c) {
         return c.id ? c.id : c;
     },
-    contextlessSend: function(target, string) {
+    contextlessSend: function(target, string, attachments) {
         var id;
         if(target.id && target.id[0] === 'U') {
             id = this.dmForUser(target.id);
@@ -113,26 +113,42 @@ SlackAdapter.prototype = {
             return Promise.reject();
         } else {
             return new Promise((resolve) => {
-                this.rtm.sendMessage(string, id, function(d) {
-                    resolve(d);
-                });
+                if(!attachments) {
+                    this.rtm.sendMessage(string, id, function(d) {
+                        resolve(d);
+                    });
+                } else {
+                    this.web.chat.postMessage(id, string, { attachments: attachments }, (e, d) => {
+                        if(d) {
+                            resolve(d);
+                        }
+                    });
+                }
             });
         }
     },
-    send: function(envelope, string) {
+    send: function(envelope, string, attachments) {
         return new Promise((resolve) => {
-            this.rtm.sendMessage(string, envelope.channel.id, (e, d) => {
-                resolve(d);
-            });
+            if(!attachments) {
+                this.rtm.sendMessage(string, envelope.channel.id, (e, d) => {
+                    resolve(d);
+                });
+            } else {
+                this.web.chat.postMessage(envelope.channel.id, string, { attachments: attachments }, (e, d) => {
+                    if(d) {
+                        resolve(d);
+                    }
+                });
+            }
         });
     },
-    reply: function(envelope, string) {
+    reply: function(envelope, string, attachments) {
         if(envelope.channel.id[0] !== 'D') {
             var initialChars = string.trim().substr(0, 3);
             var breaksLine = initialChars.indexOf('>') === 0 || initialChars.indexOf('```') === 0;
             string = '<@' + envelope.user.id + '>:' + (breaksLine ? '\n' : ' ') + string;
         }
-        return this.send(envelope, string);
+        return this.send(envelope, string, attachments);
     },
     getMentionTagForUser: function(user) {
         return '<@' + user.id + '>';
