@@ -36,25 +36,28 @@ BaseAdapter.prototype = {
      * Sends a contextless message to the chat source
      * @param  {AnyObject}  target  Destination of the message
      * @param  {String}     string  Message contents
+     * @param  {Array|null} attachments Array of attachments of the message
      * @return {undefined}          Nothing
      */
-    contextlessSend: function(target, string) { },
+    contextlessSend: function(target, string, attachments) { },
 
     /**
      * Sends an answer of an envelope
      * @param  {Envelope}   envelope    Envelope being answered
      * @param  {String}     string      Message contents
+     * @param  {Array|null} attachments Array of attachments of the message
      * @return {undefined}              Nothing
      */
-    send: function(envelope, string) { return Promise.reject(); },
+    send: function(envelope, string, attachments) { return Promise.reject(); },
 
     /**
      * Replies an envelope
      * @param  {Envelope}   envelope    Envelope being replied
      * @param  {String}     string      Message contents
+     * @param  {Array|null} attachments Array of attachments of the message
      * @return {undefined}              Nothing
      */
-    reply: function(envelope, string) { return this.send(envelope, string); },
+    reply: function(envelope, string, attachments) { return this.send(envelope, string, attachments); },
 
     /**
      * Executes the adapter

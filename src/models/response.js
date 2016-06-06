@@ -30,8 +30,8 @@ Response.prototype = {
      * @param  {String}     string      String to be sent back to the user
      * @return {undefined}              Nothing
      */
-    send: function(string) {
-        bot.adapter.send(this.envelope, string);
+    send: function(string, attachments) {
+        bot.adapter.send(this.envelope, string, attachments);
     },
 
     /**
@@ -39,8 +39,8 @@ Response.prototype = {
      * @param  {String}     string      String to be sent back to the user
      * @return {undefined}              Nothing
      */
-    reply: function(string) {
-        bot.adapter.reply(this.envelope, string);
+    reply: function(string, attachments) {
+        bot.adapter.reply(this.envelope, string, attachments);
     },
 
     /**
