@@ -10,7 +10,10 @@ var ApiManager = function() {
     this.port = settings.httpServerPort;
     logger.info(`Initialised with port: ${this.port}`);
     this.server = express();
-    this.server.get('/status', (req, res) => res.send('ok'));
+    this.router = undefined;
+    this.server.use((req, res, next) => this.router(req, res, next));
+    this.routes = {};
+    this.rebuildRouter();
 }
 
 ApiManager.prototype = {
@@ -36,15 +39,91 @@ ApiManager.prototype = {
      * @return {ApiManager} This very same ApiManager instance.
      * @chainable
      */
-    addRoute: function(type, path, callback) {
+    addRoute: function(moduleName, type, path, callback) {
         type = (type || '').toLowerCase();
         var validTypes = ['get', 'head', 'post', 'put', 'patch', 'delete'];
         if(validTypes.indexOf(type) === -1) {
             throw new Error(`Expected type to be one of: ${validTypes.join(', ')}. Got ${type}`);
         }
-        logger.debug(`Registered new ${type} route to ${path}`);
-        this.server[type](path, callback);
+        if(!this.routes.hasOwnProperty(moduleName)) {
+            this.routes[moduleName] = { suspended: false, paths: [] }
+        }
+        logger.debug(`${moduleName}: Registered new ${type} route to ${path}`);
+        this.routes[moduleName].paths.push({
+            type: type,
+            path: path,
+            callback: callback
+        });
+        this.rebuildRouter();
         return this;
+    },
+
+    /**
+     * Registers any system-related routes
+     * @return {undefined} Nothing
+     * @since 2.0
+     */
+    registerSystemRoutes: function() {
+        this.router.get('/status', (req, res) => res.send('ok'));
+    },
+
+    /**
+     * Rebuilds the application router considering new routes
+     * @return {undefined} Nothing
+     * @since 2.0
+     */
+    rebuildRouter: function() {
+        this.router = express.Router();
+        this.registerSystemRoutes();
+        Object.keys(this.routes)
+            .forEach(k => {
+                var obj = this.routes[k];
+                if(obj.suspended) {
+                    return;
+                }
+                obj.paths.forEach(r => {
+                    this.router[r.type](r.path, r.callback);
+                });
+            });
+    },
+
+    /**
+     * Suspends all routes for a given module
+     * @param  {String} name Module name to be suspended
+     * @return {undefined}      Nothing
+     * @since 2.0
+     */
+    suspendRoutesForModuleNamed: function(name) {
+        if(this.routes.hasOwnProperty(name)) {
+            this.routes[name].suspended = true;
+            this.rebuildRouter();
+        }
+    },
+
+    /**
+     * Resumes all routes for a given module
+     * @param  {String} name Module name to be resumed
+     * @return {undefined}      Nothing
+     * @since 2.0
+     */
+    resumeRoutesForModuleNamed: function(name) {
+        if(this.routes.hasOwnProperty(name)) {
+            this.routes[name].suspended = false;
+            this.rebuildRouter();
+        }
+    },
+
+    /**
+     * Removes all routes for a given module
+     * @param  {String} name Name of the module to have its routes removed
+     * @return {undefined}      Nothing
+     * @since 2.0
+     */
+    purgeRoutesForModuleNamed: function(name) {
+        if(this.routes.hasOwnProperty(name)) {
+            delete this.routes[name];
+            this.rebuildRouter();
+        }
     }
 };
 
