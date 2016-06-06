@@ -14,7 +14,8 @@ var bot = require('./bot').sharedInstance(),
 var BaseModule = function() {
     this.bot = bot;
     this.Context = Context;
-    this.logger = require('./utils/logger')(this._meta.className);
+    this.logger = require('./utils/logger')(this.getModuleName());
+    this.cronJobs = [];
 };
 
 BaseModule.prototype = {
@@ -189,6 +190,7 @@ BaseModule.prototype = {
         }
 
         var job = new Cron(schedule, callback, null, true);
+        this.cronJobs.push(job);
         return this;
     },
 
@@ -274,8 +276,8 @@ BaseModule.prototype = {
     exposeApi: function(type, path, callback) {
         var r = /(?:\/*)(.*)/;
         path = r.exec(path)[1];
-        path = `/api/${this._meta.className.toLowerCase()}/${path}`;
-        this.bot.apiManager.addRoute(type, path, callback);
+        path = `/api/${this.getModuleName().toLowerCase()}/${path}`;
+        this.bot.apiManager.addRoute(this.getModuleName(), type, path, callback);
         return this;
     },
 
@@ -287,6 +289,49 @@ BaseModule.prototype = {
      */
     getMentionTagForUser: function() {
         return bot.adapter.getMentionTagForUser.apply(this.bot.adapter, arguments);
+    },
+
+    /**
+     * Suspends all this module's activities
+     * @return {undefined} Nothing
+     * @since 2.0
+     */
+    suspendModule: function() {
+        bot.inputManager.suspendComparatorsForModuleNamed(this.getModuleName());
+        bot.apiManager.suspendRoutesForModuleNamed(this.getModuleName());
+    },
+
+    /**
+     * Resumes all this module's activities
+     * @return {undefined} Nothing
+     * @since 2.0
+     */
+    resumeModule: function() {
+        bot.inputManager.resumeComparatorsForModuleNamed(this.getModuleName());
+        bot.apiManager.resumeRoutesForModuleNamed(this.getModuleName());
+    },
+
+    /**
+     * Returns the current module name
+     * @return {String} The module name
+     * @since  2.0
+     */
+    getModuleName: function() {
+        return this._meta.moduleName;
+    },
+
+    /**
+     * Removes all bindings created by this module
+     * @return {undefined} Nothing
+     * @since 2.0
+     * @private
+     */
+    implode: function() {
+        bot.inputManager.purgeComparatorsForModuleNamed(this.getModuleName());
+        bot.apiManager.purgeRoutesForModuleNamed(this.getModuleName());
+        try {
+            this.jobs.forEach(j => j.stop());
+        } catch(_ignored) { }
     }
 };
 
