@@ -76,11 +76,6 @@ ContextManager.prototype = {
             result = false;
 
         var comparator = i => i.channel === normalisedChannel && i.user === normalisedUser;
-        logger.debug('Checking message against queue:');
-        logger.debug('Message:');
-        logger.debug(envelope);
-        logger.debug('------------------------------------');
-        logger.debug(this.queue);
 
         if(this.queue.some(comparator)) {
             var items = this.queue.filter(comparator),
