@@ -1,6 +1,5 @@
 var fs = require('fs'),
-    Path = require('path'),
-    Promise = require('bluebird');
+    Path = require('path');
 
 /**
  * Represents an object capable of listing and loading adapters using defined
