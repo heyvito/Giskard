@@ -1,5 +1,6 @@
-var fs = require('fs'),
+var fs = require('fs-promise'),
     Path = require('path'),
+    loadPackageMeta = require('read-package-json'),
     logger = require('../utils/logger')('ModuleLoader');
 
 /**
@@ -9,70 +10,72 @@ var fs = require('fs'),
 var ModuleManager = function() {
     this.basePath = Path.resolve(Path.join(__dirname, '..', '..', 'bot_modules'));
     this.modules = {};
-    this.modulesInfo = {};
     this.help = [];
+    global.requireBaseModule = global.requireBaseModule || function() {
+        return require(Path.resolve(__dirname, '..', 'base_module.js'));
+    }
 };
 
-ModuleManager.prototype = {
-
-    /**
-     * Parses a module documentation header and commands
-     * @param  {Bot}        bot     The current bot instance
-     * @param  {String}     file    Module file path to be parsed
-     * @return {AnyObject}          An object containing header and commands properties
-     */
-    parseHelp: function(file) {
-        try {
-            var body = fs.readFileSync(file, 'utf-8').split('\n'),
-                header = { name: '', authors: [], created: '' },
-                commands = [],
-                current = null;
-            body = body
-                .slice(0, body.indexOf(''))
-                .filter(l => l.trim().substr(0, 2) === '//')
-                .map(l => l.trim().substr(2).trim())
-                .forEach(l => {
-                    var data;
-                    if(l[0] === '$') {
-                        if(l.indexOf(':') === -1) {
-                            header.name = l.split('$')[1].trim();
-                        } else {
-                            data = l.split(':');
-                            if(data[0].toLowerCase().indexOf('author') > -1) {
-                                header.authors = data[1].trim().split(',').map(a => a.trim());
-                            } else {
-                                header.created = data.slice(1).join(':').trim();
-                            }
-                        }
+/**
+ * Preloads module metadata from the modules pool
+ * @param  {String} path Module path to be loaded
+ * @return {Promise}      Promise that will be always resolved, but will have a falsey value
+ *                        if a problem is found during the load process.
+ * @since 2.0.0
+ * @static
+ */
+ModuleManager.preloadModule = function(path) {
+    const packageFile = Path.join(path, 'package.json');
+    const name = Path.basename(path);
+    return fs.stat(packageFile)
+        .then(s => {
+            return new Promise((resolve) => {
+                loadPackageMeta(packageFile, (err, packageMeta) => {
+                    if(err) {
+                        logger.warning(`INVALID: Module ${name} has an invalid package.json file.`);
+                        resolve(null);
                     } else {
-                        if(l[0] === '-') {
-                            if(!!current) {
-                                commands.push(current);
-                            }
-                            data = l.trim().substr(1).trim().split(':');
-                            current = { name: data[0], description: [data[1].trim()] };
-                        } else {
-                            current.description.push(l.trim());
-                        }
+                        resolve({
+                            meta: {
+                                version: packageMeta.version,
+                                root: path,
+                                rootName: name,
+                                entrypoint: Path.join(path, packageMeta.main),
+                                author: packageMeta.author,
+                                contributors: packageMeta.contributors,
+                                moduleName: packageMeta.giskard.module,
+                                created: packageMeta.giskard.created,
+                                help: packageMeta.giskard.help,
+                                dependencies: packageMeta.dependencies,
+                                description: packageMeta.description
+                            },
+                            instance: null
+                        });
                     }
                 });
-            if(!!current) {
-                commands.push(current);
-            }
-            commands = commands.map(c => {
-                c.description = c.description.join(' ');
-                return c;
             });
-            logger.debug(`Parsed documentation for ${header.name}`);
-            return {
-                header: header,
-                commands: commands
-            };
-        } catch(ex) {
-            logger.error('Error parsing documentation for ' + file);
-            logger.error(ex);
+        })
+        .catch(ex => {
+            if(ex.code === 'ENOENT' && ex.path.endsWith('package.json')) {
+                logger.warning(`INVALID: Module ${name} lacks a package.json file.`);
+            } else {
+                logger.error('Unexpected Error: ');
+                logger.error(ex);
+            }
             return null;
-        }
+        });
+}
+
+ModuleManager.prototype = {
+    preloadModule: ModuleManager.preloadModule,
+
+    /**
+     * Gets the path for the given module
+     * @param  {String} name Module name
+     * @return {String}      Path to the module with the given name
+     */
+    pathForModuleNamed: function(name) {
+        return Path.join(this.basePath, name);
     },
 
     /**
@@ -80,35 +83,23 @@ ModuleManager.prototype = {
      * @return {String[]}       A list of possibly loadable JavaScript modules.
      */
     getModules: function() {
-        var files = [],
-            folders = [];
-        fs.readdirSync(this.basePath)
-            .forEach(f => {
+        const loaderResult = fs.readdirSync(this.basePath)
+            .map(f => {
                 try {
-                    var path = Path.join(this.basePath, f),
+                    var path = this.pathForModuleNamed(f),
                         stat = fs.statSync(path);
                     if(stat.isDirectory()) {
-                        folders.push(path);
-                    } else if(stat.isFile() && Path.extname(f) === '.js') {
-                        files.push(path);
+                        return ModuleManager.preloadModule(path);
+                    } else {
+                        logger.warning(`DEPRECATED: Module ${f} is using an old module pattern and will not be loaded.`);
+                        return Promise.resolve(null);
                     }
                 } catch(ex) {
-                    logger.error('Error analysing module structure:');
                     logger.error(ex);
+                    return Promise.resolve(null);
                 }
             });
-        folders.forEach(f => {
-            try {
-                var entrypoint = Path.join(f, `${Path.basename(f)}.js`);
-                if(fs.existsSync(entrypoint) && fs.statSync(entrypoint).isFile()) {
-                    files.push(entrypoint);
-                }
-            } catch(ex) {
-                logger.error('Error analysing folder hierarchy:');
-                logger.error(ex);
-            }
-        });
-        return files;
+        return Promise.all(loaderResult);
     },
 
     /**
@@ -120,27 +111,63 @@ ModuleManager.prototype = {
      */
     loadModules: function() {
         logger.info('Loading modules...');
-        return new Promise((resolve) => {
-            this.getModules()
-                .forEach(fp => {
-                    try {
-                        var mName = Path.basename(fp, '.js'),
-                            Ctor = require(fp);
-                        Ctor.prototype._meta.moduleName = mName;
-                        this.modules[mName] = new Ctor();
-                        logger.info(`Loaded module: ${mName}`);
-                        var mInfo = this.parseHelp(fp);
-                        if(!!mInfo) {
-                            this.modulesInfo[mInfo.header.name] = mInfo;
-                            this.help = this.help.concat(mInfo.commands.map(c => `${c.name}: ${c.description}`));
-                        }
-                    } catch(ex) {
-                        logger.error(`Error loading module at ${fp}`);
-                        logger.error(ex);
-                    }
-                });
-            resolve();
-        });
+
+        return this.getModules()
+            .then(mods => {
+                mods
+                    .filter(m => !!m)
+                    .forEach(m => this.loadModule(m));
+            })
+            .catch(ex => {
+                logger.error(ex);
+            })
+    },
+
+    /**
+     * Loads a single module into the system
+     * @param  {Object} mod Module metadata
+     * @return {Boolean}     True if the module was successfully loaded, otherwise, false.
+     * @since  2.0.0
+     */
+    loadModule: function(mod) {
+         try {
+            const Ctor = require(mod.meta.entrypoint);
+            Ctor.prototype._meta = mod.meta;
+            mod.instance = new Ctor();
+            logger.info(`Loaded module: ${mod.meta.moduleName}@${mod.meta.version}`);
+            this.modules[mod.meta.rootName] = mod;
+            this.help = this.help.concat(Object.keys(mod.meta.help).map(k => `${k}: ${mod.meta[k]}`));
+            return true;
+        } catch(ex) {
+            logger.error(`Error loading ${mod.meta.moduleName}@${mod.meta.version}:`);
+            logger.error(ex);
+            return false
+        }
+    },
+
+    /**
+     * Completely unloads a given module by its name
+     * @param  {String} name Module name to be unloaded
+     * @return {undefined}      Nothing
+     * @since 2.0
+     */
+    unloadModule: function(name) {
+        var mod = this.modules[name];
+        if(!mod) {
+            logger.warning(`Attempt to unload unknown module ${name}`);
+            return;
+        }
+        logger.info(`${name}: Unloading...`);
+        var basePath = mod.meta.root;
+        logger.info(`${name}: Imploding module instance...`);
+        mod.instance.implode();
+        logger.info(`${name}: Removing require cache...`);
+        Object.keys(require.cache)
+            .filter(k => k.startsWith(basePath))
+            .forEach(k => {
+                logger.debug(`${name}: Unloading ${k}`)
+                delete require.cache[k];
+            });
     }
 };
 
