@@ -76,7 +76,7 @@ DebugAdapter.prototype = {
         });
         return Promise.resolve();
     },
-    contextlessSend: function(target, string) {
+    contextlessSend: function(target, string, attachments) {
         var what,
             channel = null;
         if (target.indexOf && target.indexOf('__debug_user') === 0) {
@@ -91,26 +91,28 @@ DebugAdapter.prototype = {
             message: string,
             target: target,
             channel: channel,
-            ts: ts
+            ts: ts,
+            attachments: attachments
         });
         this.checkForMetadata(string, ts);
         return Promise.resolve({ ts: ts });
     },
-    send: function(envelope, string) {
+    send: function(envelope, string, attachments) {
         var ts = Date.now();
         this.io.emit('bot_said', {
             to: 'channel',
             message: string,
-            ts: ts
+            ts: ts,
+            attachments: attachments
         });
         this.checkForMetadata(string, ts);
         return Promise.resolve({ ts: ts });
     },
-    reply: function(envelope, string) {
+    reply: function(envelope, string, attachments) {
         var initialChars = string.trim().substr(0, 3);
         var breaksLine = initialChars.indexOf('>') === 0 || initialChars.indexOf('```') === 0;
         string = '@' + envelope.user.username + ':' + (breaksLine ? '\n' : '') + string;
-        return this.send(envelope, string);
+        return this.send(envelope, string, attachments);
     },
     checkForMetadata: function(text, ts) {
         var proms = [];

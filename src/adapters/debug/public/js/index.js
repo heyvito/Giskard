@@ -69,6 +69,9 @@ $(function() {
             this.chatLog.scrollTop(this.chatLog[0].scrollHeight);
         },
         appendResponse: function(incomingMessage) {
+
+            console.log(incomingMessage);
+
             var context = {
                 time: new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3"),
                 ts: incomingMessage.ts,
@@ -77,6 +80,7 @@ $(function() {
             };
             var template;
 
+            context.attachments = incomingMessage.attachments;
             if(incomingMessage.user.id === this.userId) {
                 context.from = 'You';
                 template = this.userMessageTemplateContent;
@@ -111,6 +115,7 @@ $(function() {
                 ts: msg.ts,
                 text: msg.message,
                 channel: msg.channel,
+                attachments: msg.attachments,
                 user: {
                     username: 'Giskard'
                 }

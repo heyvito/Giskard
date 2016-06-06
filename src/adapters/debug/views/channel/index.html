@@ -64,15 +64,25 @@
         <li data-ts="{{ ts }}">
             <div class="message-data">
                 {{#channel}}
-                <span class="message-data-name"><i class="fa fa-circle online"></i>{{from}}, on channel <code>{{channel}}</code></span>
-                {{/channel}}
-                {{^channel}}
-                <span class="message-data-name"><i class="fa fa-circle online"></i>{{from}}</span>
-                {{/channel}}
+                <span class="message-data-name"><i class="fa fa-circle online"></i>{{from}}, on channel <code>{{channel}}</code></span> {{/channel}} {{^channel}}
+                <span class="message-data-name"><i class="fa fa-circle online"></i>{{from}}</span> {{/channel}}
                 <span class="message-data-time">{{time}}, Today</span>
             </div>
             <div class="message my-message">
                 {{{response}}}
+                {{#attachments}}
+                <div style="background:#ffffff; border-left: 3px solid {{color}}; border-radius: 3px; min-height: 10px; padding:5px; margin-bottom: 5px; color:#000000">
+                    <a href="{{author_link}}" style="color:rgba(158, 158, 166, 1); font-size:15px; text-decoration:none" target="_blank">{{author_name}}</a> <br />
+                    <strong>{{title}}</strong> <br />
+                    {{text}} <br />
+                    {{#fields}}
+                    <div style="margin: 5px 0px 0px 0px; background:#eeeeee; border-radius: 3px; padding:5px;">
+                        <strong>{{title}}</strong> <br />
+                        {{value}}
+                    </div>
+                    {{/fields}}
+                </div>
+                {{/attachments}}
             </div>
         </li>
     </script>
