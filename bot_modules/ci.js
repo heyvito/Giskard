@@ -106,7 +106,7 @@ var CI = function(bot) {
                             author_name: `Build #${r.build.number}`,
                             author_link: `${process.env.CI_HOST}/${r.repo.owner}/${r.repo.name}/${r.build.number}`,
                             title: r.repo.name,
-                            text: `Build ${r.build.author} com modificações de ${nameForStatus(r.build.status)}`,
+                            text: `Build #${r.build.number} com modificações de ${r.build.author} ${nameForStatus(r.build.status)}`,
                             fields: [
                                 {
                                     title: 'Build Link',
