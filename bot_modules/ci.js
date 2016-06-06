@@ -31,13 +31,13 @@ var CI = function(bot) {
     var nameForStatus = function(s) {
         switch(s) {
             case 'success':
-                return 'succeeded';
+                return 'foi concluído sem erros';
             case 'failed':
-                return 'failed';
+                return 'falhou';
             case 'running':
-                return 'is still running';
+                return 'ainda está em execução';
             case 'pending':
-                return 'is enqueued for building';
+                return 'está pendente na fila';
         }
     };
 
@@ -101,12 +101,12 @@ var CI = function(bot) {
                     .then(repos => repos.sort(b => b.build.created_at).reverse())
                     .then(repos => repos.slice(0, 5))
                     .then(repos => repos.map(r => ({
-                            fallback: `Build #${r.build.number} started by ${r.build.author} ${nameForStatus(r.build.status)}`,
+                            fallback: `Build #${r.build.number} com modificações de ${r.build.author} ${nameForStatus(r.build.status)}`,
                             color: colorForStatus(r.build.status),
                             author_name: `Build #${r.build.number}`,
                             author_link: `${process.env.CI_HOST}/${r.repo.owner}/${r.repo.name}/${r.build.number}`,
                             title: r.repo.name,
-                            text: `Build started by ${r.build.author} ${nameForStatus(r.build.status)}`,
+                            text: `Build ${r.build.author} com modificações de ${nameForStatus(r.build.status)}`,
                             fields: [
                                 {
                                     title: 'Build Link',
