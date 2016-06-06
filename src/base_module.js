@@ -339,13 +339,11 @@ BaseModule.prototype = {
 /**
  * Extends an given type to this type
  * @param  {Type}   klass               Type to be extended
- * @param  {String} prettyKlassName     Name of this moduled, used by subsystems to provide
- *                                      identification facilities.
  * @return {undefined}      Nothing
  */
-BaseModule.setup = function(klass, prettyKlassName) {
+BaseModule.setup = function(klass) {
     inherit(klass, BaseModule);
-    klass.prototype._meta = { className: prettyKlassName };
+    return klass;
 };
 
 module.exports = BaseModule;
