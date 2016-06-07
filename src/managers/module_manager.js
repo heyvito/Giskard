@@ -136,7 +136,7 @@ ModuleManager.prototype = {
             mod.instance = new Ctor();
             logger.info(`Loaded module: ${mod.meta.moduleName}@${mod.meta.version}`);
             this.modules[mod.meta.rootName] = mod;
-            this.help = this.help.concat(Object.keys(mod.meta.help).map(k => `${k}: ${mod.meta[k]}`));
+            this.help = this.help.concat(Object.keys(mod.meta.help).map(k => `${k}: ${mod.meta.help[k]}`));
             return true;
         } catch(ex) {
             logger.error(`Error loading ${mod.meta.moduleName}@${mod.meta.version}:`);
