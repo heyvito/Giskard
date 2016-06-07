@@ -71,10 +71,10 @@ var questions = [
         name: 'moduleName',
         message: 'What\'s the "formal" name of your module? (Ex: SandwishMaker)',
         validate: (value) => {
-            if(value.match(/[A-Z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*/)) {
+            if(value.match(/[A-Z][A-Za-z0-9_]+/)) {
                 return true;
             }
-            return 'Please use an CamelCased name. No spaces. No punctuation. Only letters A-Z and numbers 0-9. Cannot start with a number.'
+            return 'Please use an CamelCased name. No spaces. No punctuation. Only letters A-Z and numbers 0-9. Cannot start with a number. Must start with a capital letter.'
         }
     }
 ];
@@ -153,8 +153,7 @@ var ${answers.moduleName} = function(bot) {
     // });
 };
 
-Base.setup(${answers.moduleName});
-module.exports = ${answers.moduleName};
+module.exports = Base.setup(${answers.moduleName});
 `;
       return fs.writeFile(Path.join(targetSource, `${answers.moduleName.toLowerCase()}.js`), file);
       })
