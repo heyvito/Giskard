@@ -1,0 +1,169 @@
+#!/usr/bin/env node
+var inquirer = require('inquirer'),
+    Path = require('path'),
+    fs = require('fs-promise'),
+    npmlog = require('npmlog'),
+    Git = require('nodegit');
+
+
+
+console.log(['This utility will walk you through creating a Giskard module bundle.',
+      'It only covers the most common items, but we will fill it with sample data',
+      'so you can easily pick up and finish it.',
+      '',
+      'Press ^C at any time to quit.',
+      ''].join('\n'));
+
+var questions = [
+    {
+        type: 'input',
+        name: 'repo_name',
+        message: 'What\'s the name of your module repository? (Ex: giskard-make-me-a-sandwish)',
+        default: 'giskard-drone'
+    },
+    {
+        type: 'input',
+        name: 'version',
+        message: 'What\'s the version of your module?',
+        default: '0.0.1'
+    },
+    {
+        type: 'input',
+        name: 'desc',
+        message: 'Describe your module in a few words (Ex: Add sandwish-making capabilities to Giskard)',
+        default: 'Integrates Giskard with Drone CI'
+    },
+    {
+        type: 'input',
+        name: 'author',
+        message: 'How do people usually call you? (AKA your name)',
+        default: () => {
+            var user, email;
+            return Git.Config.openDefault()
+                .then(c => {
+                    return c.getString('user.name')
+                        .then(u => user = u)
+                        .then(() => c.getString('user.email'))
+                        .then(e => email = e)
+                        .then(() => `${user} <${email}>`);
+                })
+                .catch(() => process.env.USER || 'Batman');
+        },
+        validate: (value) => {
+            if(value.length > 2) {
+                return true;
+            }
+            return 'I need to know your name! :(';
+        }
+  },
+  {
+        type: 'input',
+        name: 'license',
+        message: 'You\'re planning to distribute your module using which license?',
+        default: () => 'MIT',
+        validate: (value) => {
+            if(value.trim() != '') {
+                return true;
+            }
+            return 'Please provide a license for your module.';
+        }
+  },
+  {
+        type: 'input',
+        name: 'moduleName',
+        message: 'What\'s the "formal" name of your module? (Ex: SandwishMaker)',
+        default: 'DroneCI',
+        validate: (value) => {
+            if(value.match(/[A-Z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*/)) {
+                return true;
+            }
+            return 'Please use an CamelCased name. No spaces. No punctuation. Only letters A-Z and numbers 0-9. Cannot start with a number.'
+        }
+    }
+];
+
+inquirer.prompt(questions).then((answers) => {
+  console.log('');
+  var modulesRoot = Path.join(__dirname, '..', 'bot_modules'),
+      targetModule = Path.join(modulesRoot, answers.repo_name),
+      targetSource = Path.join(targetModule, 'src');
+  fs.stat(targetModule)
+    .then(s => {
+      if(s.isDirectory()) {
+        return inquirer.prompt([
+          {
+            type: 'list',
+            message: `🤔 Looks like you already have a directory named ${answers.repo_name} in your bot_modules. Shall we overwrite it?`,
+            name: 'result',
+            choices: [
+                'Oh noes! Don\'t! 😱',
+                'Hell yeah! 🔥',
+            ]
+          }
+        ])
+        .then(function(overwrite) {
+            console.log();
+            if(overwrite.result === 'no') {
+                logger.warn('NewModule', 'Aborted!');
+                process.exit(1);
+            } else {
+                return fs.remove(targetModule);
+            }
+        });
+      }
+    })
+    .catch(ex => {
+      if(ex.code === 'ENOENT') {
+        return Promise.resolve();
+      } else {
+        npmlog.error('NewModule', ex);
+        process.exit(1);
+      }
+      logger.info('NewModule', 'Creating directory structure...');
+    })
+    .then(() => fs.mkdir(targetModule))
+    .then(() => fs.mkdir(targetSource))
+    .then(() => {
+      npmlog.info('NewModule', 'Generating package.json...');
+      var result = {
+        name: answers.repo_name,
+        version: answers.version,
+        description: answers.desc,
+        main: `src/${answers.moduleName.toLowerCase()}.js`,
+        author: answers.author,
+        contributors: [],
+        license: answers.license,
+        giskard: {
+          module: answers.moduleName,
+          created: new Date().toString(),
+          help: {
+            "Sample command": "Describe here what the sample command does"
+          }
+        },
+        dependencies: { }
+      };
+      return fs.writeFile(Path.join(targetModule, 'package.json'), JSON.stringify(result, null, 2));
+    })
+    .then(() => {
+      npmlog.info('NewModule', 'Creating module Entrypoint...');
+      var file = `var Base = requireBaseModule();
+
+var ${answers.moduleName} = function(bot) {
+    Base.call(this, bot);
+
+    // this.respond(/hi!$/i, function(response) {
+    //     response.reply('Hello!');
+    // });
+};
+
+Base.setup(${answers.moduleName});
+module.exports = ${answers.moduleName};
+`;
+      return fs.writeFile(Path.join(targetSource, `${answers.moduleName.toLowerCase()}.js`), file);
+      })
+      .then(() => npmlog.info('NewModule', 'Initialising git repository...'))
+      .then(() => Git.Repository.init(targetModule, 0))
+      .then(() => npmlog.info('NewModule', 'Done! Happy hacking!'))
+      .catch(ex => npmlog.error('NewModule', ex));
+})
+.catch(ex => npmlog.error('NewModule', ex));
