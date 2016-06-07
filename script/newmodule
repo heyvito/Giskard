@@ -18,8 +18,7 @@ var questions = [
     {
         type: 'input',
         name: 'repo_name',
-        message: 'What\'s the name of your module repository? (Ex: giskard-make-me-a-sandwish)',
-        default: 'giskard-drone'
+        message: 'What\'s the name of your module repository? (Ex: giskard-make-me-a-sandwish)'
     },
     {
         type: 'input',
@@ -30,8 +29,7 @@ var questions = [
     {
         type: 'input',
         name: 'desc',
-        message: 'Describe your module in a few words (Ex: Add sandwish-making capabilities to Giskard)',
-        default: 'Integrates Giskard with Drone CI'
+        message: 'Describe your module in a few words (Ex: Add sandwish-making capabilities to Giskard)'
     },
     {
         type: 'input',
@@ -72,7 +70,6 @@ var questions = [
         type: 'input',
         name: 'moduleName',
         message: 'What\'s the "formal" name of your module? (Ex: SandwishMaker)',
-        default: 'DroneCI',
         validate: (value) => {
             if(value.match(/[A-Z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*/)) {
                 return true;
