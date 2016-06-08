@@ -257,7 +257,7 @@ InstallationManager.prototype = {
      * @param  {String} modulePath Path to the module to be inspected.
      * @return {Promise}            A promise related to the stat operation
      */
-    checkModuleStructure: function(modulePath) {
+    checkModuleStructure: function(modulePath, name) {
         return fs.stat(modulePath)
             .catch(ex => {
                 if(ex.code === 'ENOENT') {
@@ -392,7 +392,7 @@ InstallationManager.prototype = {
                 logger.info(`${name}: Checking module structure...`);
                 modulePath = Path.join(this.modulesPath, name);
                 meta = m;
-                return this.checkModuleStructure(modulePath, meta);
+                return this.checkModuleStructure(modulePath, name);
             })
             .then(() => ModuleManager.preloadModule(modulePath))
             .then(mod => {
@@ -495,7 +495,7 @@ InstallationManager.prototype = {
                 logger.info(`${name}: Checking module structure...`);
                 modulePath = Path.join(this.modulesPath, name);
                 meta = m;
-                return this.checkModuleStructure(modulePath, meta);
+                return this.checkModuleStructure(modulePath, name);
             })
             .then(m => this.removeModule(modulePath, name))
             .then(m => db.ModuleMeta.findOneAndRemove({ name: name }))
