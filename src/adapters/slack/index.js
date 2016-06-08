@@ -80,8 +80,31 @@ SlackAdapter.prototype = {
                 if(message.channel[0] === 'D') {
                     message.text = this.bot.name + ': ' + message.text;
                 }
-                var env = this.makeEnvelope(message.text, message, this.users[message.user], this.channels[message.channel] || this.dms[message.channel]);
-                this.receive(env);
+                if(!this.users[message.user]) {
+                    logger.verbose(`Acquiring extra data for unknown user: ${message.user}`);
+                    this.web.users.info(message.user)
+                        .then(response => this.db.User.fromSlackData(response.user))
+                        .then(user => {
+                            return this.web.dm.open(user.id)
+                                .then(r => {
+                                    logger.verbose(`Acquired extra data for user ${user.id}`);
+                                    this.dms[r.channel.id] = { id: r.channel.id };
+                                    this.dmMap[u.id] = { id: r.channel.id };
+                                    this.users[message.user] = user;
+                                })
+                                .then(() => {
+                                    var env = this.makeEnvelope(message.text, message, this.users[message.user], this.channels[message.channel] || this.dms[message.channel]);
+                                    this.receive(env);
+                                });
+                        })
+                        .catch(ex => {
+                            logger.error('Error acquiring extra data: ');
+                            logger.error(ex);
+                        })
+                } else {
+                    var env = this.makeEnvelope(message.text, message, this.users[message.user], this.channels[message.channel] || this.dms[message.channel]);
+                    this.receive(env);
+                }
             });
             this.messageEventSet = true;
         }
