@@ -198,7 +198,7 @@ InstallationManager.prototype = {
                     })
                     .catch((rollErr) => {
                         logger.error('Rollback threw an error:');
-                        logger.ex(rollErr);
+                        logger.error(rollErr);
                         ex.giskRolledback = false;
                         return Promise.reject(ex);
                     });
