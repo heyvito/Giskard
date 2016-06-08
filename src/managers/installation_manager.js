@@ -197,8 +197,6 @@ InstallationManager.prototype = {
                         return Promise.reject(ex);
                     })
                     .catch((rollErr) => {
-                        logger.error('Rollback threw an error:');
-                        logger.error(rollErr);
                         ex.giskRolledback = false;
                         return Promise.reject(ex);
                     });
@@ -262,7 +260,7 @@ InstallationManager.prototype = {
             .catch(ex => {
                 if(ex.code === 'ENOENT') {
                     logger.warning(`${name}: Exists on index, but not on fs. Purging...`);
-                    db.ModuleMeta.findOneAndDelete({ name: name });
+                    db.ModuleMeta.remove({ name: name });
                     var error = new Error('Invalid module structure.');
                     error.code = 'EINVALIDMODSTRUCTURE';
                     error.giskInternal = true;
@@ -498,7 +496,7 @@ InstallationManager.prototype = {
                 return this.checkModuleStructure(modulePath, name);
             })
             .then(m => this.removeModule(modulePath, name))
-            .then(m => db.ModuleMeta.findOneAndDelete({ name: name }))
+            .then(m => db.ModuleMeta.remove({ name: name }))
             .then(m => { Bot.sharedInstance().moduleManager.unloadModule(name) })
             .catch(ex => {
                 if(!ex.giskInternal) {
