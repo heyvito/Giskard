@@ -301,6 +301,7 @@ InstallationManager.prototype = {
                                 var error = new Error('Error updating dependencies.');
                                 error.code = 'EUPDATINGDEPS';
                                 error.giskInternal = true;
+                                error.reloadModule = true;
                                 return Promise.reject(error);
                             })
                     })
@@ -439,6 +440,7 @@ InstallationManager.prototype = {
                     });
                 logger.info(`${name}: Update succeeded. Removing backup files...`);
                 this.cleanupUpdateBackups(name, mod);
+                return mod;
             })
             .catch(ex => {
                 if(ex.code === 'EMODNOTFOUND') {
