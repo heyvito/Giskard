@@ -10,7 +10,7 @@ var fs = require('fs-promise'),
 var ModuleManager = function() {
     this.basePath = Path.resolve(Path.join(__dirname, '..', '..', 'bot_modules'));
     this.modules = {};
-    this.help = [];
+    this.help = {};
     global.requireBaseModule = global.requireBaseModule || function() {
         return require(Path.resolve(__dirname, '..', 'base_module.js'));
     }
@@ -136,7 +136,9 @@ ModuleManager.prototype = {
             mod.instance = new Ctor();
             logger.info(`Loaded module: ${mod.meta.moduleName}@${mod.meta.version}`);
             this.modules[mod.meta.rootName] = mod;
-            this.help = this.help.concat(Object.keys(mod.meta.help).map(k => `${k}: ${mod.meta.help[k]}`));
+            this.help[mod.meta.rootName] = { title: mod.meta.moduleName, contents: {} };
+            Object.keys(mod.meta.help)
+                .forEach(k => this.help[mod.meta.rootName].contents[k] = mod.meta.help[k]);
             return true;
         } catch(ex) {
             logger.error(`Error loading ${mod.meta.moduleName}@${mod.meta.version}:`);
