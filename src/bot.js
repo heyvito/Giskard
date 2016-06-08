@@ -49,8 +49,8 @@ Bot.prototype = {
                         this.moduleManager
                             .loadModules()
                             .then(() => {
-                                if(program.installDeps) {
-                                    this.logger.info('Respecting install-deps flag.');
+                                if(program.installDeps || (Object.keys(this.moduleManager.modules).length < 1 && process.env.GISK_ENV === 'prod')) {
+                                    this.logger.info('Respecting install-deps flag or prefilling modules on production environment...');
                                     return this.installationManager.install('giskard-bot/module-manager');
                                 } else {
                                     return Promise.resolve();
