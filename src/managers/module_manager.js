@@ -143,7 +143,8 @@ ModuleManager.prototype = {
         } catch(ex) {
             logger.error(`Error loading ${mod.meta.moduleName}@${mod.meta.version}:`);
             logger.error(ex);
-            return false
+            this.modules[mod.meta.rootName] = { failed: true, meta: mod.meta }
+            return false;
         }
     },
 
