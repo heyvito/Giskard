@@ -2,7 +2,8 @@ var EventEmitter = require('events'),
     Path = require('path'),
     fs = require('fs'),
     Singleton = require('./utils/singleton'),
-    pkg = require('../package.json');
+    pkg = require('../package.json'),
+    commander = require('commander');
 
 var Bot = function() {
     [
@@ -20,18 +21,20 @@ var Bot = function() {
 };
 
 Bot.prototype = {
-    bootstrap: function() {
+    bootstrap: function(program) {
         this.settings = require('./models/settings').sharedInstance();
         this.name = 'bot';
         this.mentionMarks = [];
         var InputManager = require('./managers/input_manager'),
             ModuleManager = require('./managers/module_manager'),
+            InstallationManager = require('./managers/installation_manager'),
             ContextManager = require('./managers/context_manager'),
             ApiManager = require('./managers/api_manager'),
             Sentry = require('./utils/sentry');
 
         Sentry.sharedInstance().setup();
         this.moduleManager = new ModuleManager();
+        this.installationManager = new InstallationManager();
         this.inputManager = new InputManager();
         this.contextManager = new ContextManager();
         this.apiManager = new ApiManager();
@@ -45,6 +48,20 @@ Bot.prototype = {
                         this.apiManager.startServer();
                         this.moduleManager
                             .loadModules()
+                            .then(() => {
+                                if(program.installDeps) {
+                                    this.logger.info('Respecting install-deps flag.');
+                                    return this.installationManager.install('giskard-bot/module-manager');
+                                } else {
+                                    return Promise.resolve();
+                                }
+                            })
+                            .catch(ex => {
+                                this.logger.error('Error installing dependencies through install-deps:');
+                                this.logger.error(ex);
+                                this.logger.warning('Resuming boot...');
+                                return Promise.resolve();
+                            })
                             .then(() => this.logger.info('Dispatching "run" command to Adapter...'))
                             .then(() => this.adapter.run());
                     })

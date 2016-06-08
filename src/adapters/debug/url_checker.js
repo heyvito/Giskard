@@ -1,5 +1,4 @@
-var rp = require('request'),
-    http = require('http'),
+var http = require('http'),
     https = require('https'),
     fileType = require('file-type');
 

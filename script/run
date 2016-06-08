@@ -1,5 +1,0 @@
-#!/bin/bash
-# Starts the bot using IPC and process monitor
-
-cd src
-node index.js

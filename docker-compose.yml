@@ -7,9 +7,7 @@ web:
     - /app/node_modules
   ports:
     - "2708:2708"
-  environment:
-    CI_DEFAULT_USER: 'chr0nu5'
-    CI_HOST: 'https://drone.27labs.io'
-    CI_TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZXh0IjoiY2hyMG51NSIsInR5cGUiOiJ1c2VyIn0.gFbfYUnIISgefE2yj3MpgBgcLhTK0KphHyZWAmryxrA'
+  env_file:
+    - .env
 db:
   image: mongo

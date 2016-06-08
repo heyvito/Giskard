@@ -36,3 +36,7 @@ settings.json
 .sass-cache
 .codekit-cache
 .DS_Store
+
+# Giskard stuff
+bot_modules/
+.env
