@@ -262,7 +262,7 @@ InstallationManager.prototype = {
             .catch(ex => {
                 if(ex.code === 'ENOENT') {
                     logger.warning(`${name}: Exists on index, but not on fs. Purging...`);
-                    db.ModuleMeta.remove({ name: name });
+                    db.ModuleMeta.findOneAndRemove({ name: name });
                     var error = new Error('Invalid module structure.');
                     error.code = 'EINVALIDMODSTRUCTURE';
                     error.giskInternal = true;
