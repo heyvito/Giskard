@@ -260,16 +260,18 @@ InstallationManager.prototype = {
             .catch(ex => {
                 if(ex.code === 'ENOENT') {
                     logger.warning(`${name}: Exists on index, but not on fs. Purging...`);
-                    db.ModuleMeta.remove({ name: name });
-                    var error = new Error('Invalid module structure.');
-                    error.code = 'EINVALIDMODSTRUCTURE';
-                    error.giskInternal = true;
-                    return Promise.reject(error);
+                    return db.ModuleMeta.remove({ name: name });
                 } else {
                     logger.error(`${name}: ::checkModuleStructure: Unexpected error.`);
                     logger.error(ex);
                     return Promise.reject(ex);
                 }
+            })
+            .then(() => {
+                var error = new Error('Invalid module structure.');
+                error.code = 'EINVALIDMODSTRUCTURE';
+                error.giskInternal = true;
+                return Promise.reject(error);
             });
     },
 
