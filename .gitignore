@@ -39,3 +39,4 @@ settings.json
 
 # Giskard stuff
 bot_modules/
+.env
