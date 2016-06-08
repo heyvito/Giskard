@@ -266,7 +266,7 @@ InstallationManager.prototype = {
                     var error = new Error('Invalid module structure.');
                     error.code = 'EINVALIDMODSTRUCTURE';
                     error.giskInternal = true;
-                    return Promise.reject(ex);
+                    return Promise.reject(error);
                 } else {
                     logger.error(`${name}: ::checkModuleStructure: Unexpected error.`);
                     logger.error(ex);
