@@ -70,11 +70,12 @@ InstallationManager.prototype = {
      */
     rollback: function(targetPath) {
         return fs.remove(targetPath)
+            .then(() => ({ success: true }))
             .catch(ex => {
                 logger.error('Error rolling back:');
                 logger.error(ex);
                 logger.warning('Modules pool may be in an unusable state.');
-                return Promise.resolve(); // FIXME: Is this really necessary?
+                return Promise.resolve({ success: false });
             });
     },
 
@@ -165,7 +166,7 @@ InstallationManager.prototype = {
                     error.giskInternal = true;
                     return Promise.reject(error);
                 } else {
-                    db.ModuleMeta.findOneAndUpdate(
+                    return db.ModuleMeta.findOneAndUpdate(
                         { name: name },
                         {
                             name: name,
@@ -176,24 +177,31 @@ InstallationManager.prototype = {
                         },
                         { new: true, upsert: true }
                     )
-                    .then(doc => { })
+                    .then(doc => { return Promise.resolve(moduleMeta); })
                     .catch(err => {
                         if(!!err) {
                             logger.warning('Error inserting module on index:');
                             logger.error(err);
                         }
                     });
-
                 }
             })
             .catch(ex => {
                 logger.error('Installation failed:');
                 logger.error(ex);
-                this.rollback(targetPath);
-
                 // Allows the error to propagate through the promise chain, since we intercepted it
                 // to provide logs and rollback the whole process.
-                return Promise.reject(ex);
+                return this.rollback(targetPath)
+                    .then((result) => {
+                        ex.giskRolledback = result.success;
+                        return Promise.reject(ex);
+                    })
+                    .catch((rollErr) => {
+                        logger.error('Rollback threw an error:');
+                        logger.ex(rollErr);
+                        ex.giskRolledback = false;
+                        return Promise.reject(ex);
+                    });
             });
     },
 
