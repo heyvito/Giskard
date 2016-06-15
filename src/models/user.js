@@ -176,7 +176,7 @@ userSchema.methods.updateSocialNetworkHandle = function(name, value) {
         value: value
     };
     return bot.db.UserSocialNetworkAssoc
-        .findOneAndUpdate({ userId: this.id, name: this.name }, aData, { new: true, upsert: true })
+        .findOneAndUpdate({ userId: this.id, name: name }, aData, { new: true, upsert: true })
         .exec();
 };
 
