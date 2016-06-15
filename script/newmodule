@@ -145,10 +145,10 @@ inquirer.prompt(questions).then((answers) => {
       npmlog.info('NewModule', 'Creating module Entrypoint...');
       var file = `var Base = requireBaseModule();
 
-var ${answers.moduleName} = function(bot) {
-    Base.call(this, bot);
+var ${answers.moduleName} = function() {
+    Base.call(this);
 
-    // this.respond(/hi!$/i, function(response) {
+    // this.respond(/hi!$/i, (response) => {
     //     response.reply('Hello!');
     // });
 };
