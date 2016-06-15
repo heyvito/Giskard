@@ -150,7 +150,7 @@ ContextManager.prototype = {
             logger.debug('Removed ' + conflicts.length + ' conflicting contexts');
         }
 
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             bot.adapter.reply({
                 channel: channel,
                 user: user
@@ -160,10 +160,36 @@ ContextManager.prototype = {
                     type: type,
                     user: typeof user === 'string' ? user : user.id,
                     channel: typeof channel === 'string' ? channel : channel.id,
-                    resolve: resolve
+                    resolve: resolve,
+                    reject: reject
                 });
             });
         });
+    },
+
+    handleReactionAdded: function(data) {
+        if(['thumbs_down', 'thumbsdown', '-1'].indexOf(data.reaction) === -1) {
+            logger.debug(`Ignoring unknown reaction ${data.reaction} on event:`);
+            logger.debug(data);
+            return;
+        }
+        this.queue
+            .filter(c => c.reference.uid === data.initiator && c.reference.ts === data.ts)
+            .forEach(c => {
+                logger.debug(`Rejecting stored context ${c.reference._id}`);
+                c.reject();
+                this.queue.splice(this.queue.indexOf(c), 1);
+            });
+        db.Context
+            .find({ uid: data.initiator, ts: data.ts })
+            .remove()
+            .then((data, err) => {
+                if(!err && data.result && data.result.ok) {
+                    logger.silly(`Removed ${data.result.n} stored references(s)`);
+                } else {
+                    logger.warning('Stored context reference removal failed.');
+                }
+            });
     }
 };
 

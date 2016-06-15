@@ -75,6 +75,22 @@ SlackAdapter.prototype = {
     },
     run: function() {
         if(!this.messageEventSet) {
+            this.rtm.on(RTM_EVENTS.REACTION_ADDED, (message) => {
+                try {
+                    if(!message.item.ts || !message.reaction) {
+                        logger.verbose('Ignoring inconsistent REACTION_ADDED event.');
+                        return;
+                    }
+                    this.bot.contextManager.handleReactionAdded({
+                        ts: message.item.ts,
+                        reaction: message.reaction.split('::')[0],
+                        initiator: message.user
+                    });
+                } catch(ex) {
+                    logger.error('REACTION_ADDED handler faulted:');
+                    logger.error(ex);
+                }
+            });
             this.rtm.on(RTM_EVENTS.MESSAGE, (message) => {
                 if(message.type !== 'message' || !!message.subtype) { return; }
                 if(message.channel[0] === 'D') {
