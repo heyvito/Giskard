@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: utils/db.js</title>
+    <title>JSDoc: Source: models/user_assoc.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Source: utils/db.js</h1>
+    <h1 class="page-title">Source: models/user_assoc.js</h1>
 
     
 
@@ -26,44 +26,32 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>var mongoose = require('mongoose'),
-    settings = require('../models/settings').sharedInstance(),
-    User = require('../models/user'),
-    Context = require('../models/context'),
-    Channel = require('../models/channel'),
-    logger = require('./logger')('DatabaseConnector'),
-    ModuleMeta = require('../models/module_meta'),
-    UserAssoc = require('../models/user_assoc');
+            <pre class="prettyprint source linenums"><code>var mongoose = require('mongoose');
 
-var connected;
+var userAssocSchema = mongoose.Schema({
+    userId: String,
+    name: String,
+    value: String
+});
 
-module.exports = {
-    User: User,
-    Context: Context,
-    Channel: Channel,
-    ModuleMeta: ModuleMeta,
-    UserAssoc: UserAssoc,
+/**
+ * Returns the UserAssoc descrption. Useful during debug.
+ * @return {String}     UserAssoc description.
+ * @instance
+ * @name  toString
+ * @memberOf UserAssoc
+ * @method
+ */
+userAssocSchema.methods.toString = function() {
+    return `[Giskard::Models::UserAssoc &lt;[User ${this.userId}] ${this.name}: ${this.value}>]`;
+}
 
-    /**
-     * Prepares the database connector to run
-     * @return {Promise}      A Promise that will be resolved whenever the connection is established.
-     *                        Further calls to this function will return a resolved promise.
-     */
-    prepare: () => {
-        if(connected) {
-            return Promise.resolve();
-        } else {
-            return new Promise((resolve, reject) => {
-                logger.verbose(`Connecting to ${settings.mongoUrl}`);
-                mongoose.connect(settings.mongoUrl);
-                mongoose.connection
-                    .on('open', resolve)
-                    .on('open', () => { connected = true; })
-                    .on('error', reject);
-            });
-        }
-    }
-};
+/**
+ * Represents a stored User association metadata.
+ * @constructor
+ * @name  UserAssoc
+ */
+module.exports = mongoose.model('UserAssoc', userAssocSchema);
 </code></pre>
         </article>
     </section>

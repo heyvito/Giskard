@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Adapters</title>
+    <title>JSDoc: Class: UserAssoc</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
 
-    <h1 class="page-title">Class: Adapters</h1>
+    <h1 class="page-title">Class: UserAssoc</h1>
 
     
 
@@ -28,7 +28,7 @@
 
 <header>
     
-        <h2>Adapters</h2>
+        <h2>UserAssoc</h2>
         
     
 </header>
@@ -40,15 +40,14 @@
 
     
 
-    <h4 class="name" id="Adapters"><span class="type-signature"></span>new Adapters<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="UserAssoc"><span class="type-signature"></span>new UserAssoc<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Represents an object capable of listing and loading adapters using defined
-conventions.</p>
+    <p>Represents a stored User association metadata.</p>
 </div>
 
 
@@ -92,7 +91,7 @@ conventions.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="managers_adapter_manager.js.html">managers/adapter_manager.js</a>, <a href="managers_adapter_manager.js.html#line10">line 10</a>
+        <a href="models_user_assoc.js.html">models/user_assoc.js</a>, <a href="models_user_assoc.js.html#line21">line 21</a>
     </li></ul></dd>
     
 
@@ -141,14 +140,14 @@ conventions.</p>
 
     
 
-    <h4 class="name" id="getAdapters"><span class="type-signature"></span>getAdapters<span class="signature">()</span><span class="type-signature"> &rarr; {Array.&lt;String>}</span></h4>
+    <h4 class="name" id="toString"><span class="type-signature"></span>toString<span class="signature">()</span><span class="type-signature"> &rarr; {String}</span></h4>
 
     
 
 
 
 <div class="description">
-    <p>Gets a list of available adapters in the adapters folder.</p>
+    <p>Returns the UserAssoc descrption. Useful during debug.</p>
 </div>
 
 
@@ -192,7 +191,7 @@ conventions.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="managers_adapter_manager.js.html">managers/adapter_manager.js</a>, <a href="managers_adapter_manager.js.html#line20">line 20</a>
+        <a href="models_user_assoc.js.html">models/user_assoc.js</a>, <a href="models_user_assoc.js.html#line9">line 9</a>
     </li></ul></dd>
     
 
@@ -219,7 +218,7 @@ conventions.</p>
 
         
 <div class="param-desc">
-    <p>List containing the names of available adapters.</p>
+    <p>UserAssoc description.</p>
 </div>
 
 
@@ -230,161 +229,7 @@ conventions.</p>
     </dt>
     <dd>
         
-<span class="param-type">Array.&lt;String></span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id="loadAdapter"><span class="type-signature"></span>loadAdapter<span class="signature">(name)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>Loads an adapter.</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>name</code></td>
-            
-
-            <td class="type">
-            
-                
 <span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Name of the adapter to be loaded.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="managers_adapter_manager.js.html">managers/adapter_manager.js</a>, <a href="managers_adapter_manager.js.html#line34">line 34</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>Promise that will be resolved when the given adapter is loaded.
-                      Can be rejected if there's a problem during the process.</p>
-</div>
-
-
-
-<dl>
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise</span>
 
 
     </dd>
