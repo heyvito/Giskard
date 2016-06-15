@@ -24,7 +24,13 @@ var questions = [
         type: 'input',
         name: 'version',
         message: 'What\'s the version of your module?',
-        default: '0.0.1'
+        default: '0.0.1',
+        validate: (value) => {
+          if(value.split('.').length === 3) {
+            return true;
+          }
+          return 'Please provide a version with three components. (Ex: 0.0.1)';
+        }
     },
     {
         type: 'input',
