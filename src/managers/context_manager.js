@@ -149,12 +149,17 @@ ContextManager.prototype = {
             });
             logger.debug('Removed ' + conflicts.length + ' conflicting contexts');
         }
-
+        var attachment = [
+            {
+                "text": '*Protip*: Adicione :-1: como reaction para cancelar uma pergunta',
+                "mrkdwn_in": ["text"]
+            }
+        ];
         return new Promise((resolve, reject) => {
             bot.adapter.reply({
                 channel: channel,
                 user: user
-            }, message).then((mi) => {
+            }, message, attachment).then((mi) => {
                 this.registerContext({
                     messageCallback: mi,
                     type: type,
