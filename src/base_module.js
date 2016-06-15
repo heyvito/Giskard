@@ -85,8 +85,8 @@ BaseModule.prototype = {
      * Pushes a new context to a given user in a given channel. If another context
      * with the same type is present in the given channel/user combination, the older
      * context is dropped in favour of the new one. The `Promise` returned will be resolved
-     * whenever the user sends a message that satisfies the context type. Notice that the
-     * resulting Promise will never be rejected, but can also never be resolved.
+     * whenever the user sends a message that satisfies the context type. If the user reacts
+     * with an negative emoji (-1, thumbsdown), the promise is rejected.
      * @param   {String}            message         The message containing the prompt to the user.
      * @param   {User|String}       user            The user to which the prompt is directed to.
      *                                              This argument accepts both a User instance, or

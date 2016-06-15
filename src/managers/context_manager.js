@@ -167,6 +167,16 @@ ContextManager.prototype = {
         });
     },
 
+    /**
+     * Handles a REACTION_ADDED event for a given message. Used to reject and
+     * notify context promises that the user has cancelled or refused to answer
+     * the question by using an emoji reaction.
+     * @param  {Object}     data                Message metadata preprocessed
+     *                                          by the current adapter
+     * @return {undefined}                      Nothing
+     * @private
+     * @since  2.1
+     */
     handleReactionAdded: function(data) {
         if(['thumbs_down', 'thumbsdown', '-1'].indexOf(data.reaction) === -1) {
             logger.debug(`Ignoring unknown reaction ${data.reaction} on event:`);

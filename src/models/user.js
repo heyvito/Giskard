@@ -108,8 +108,8 @@ userSchema.methods.updateLastSeen = function() {
  *                          Context.BOOL, and Context.REGEX. Documentation about those items and
  *                          how they behave can be found in the `Context` documentation.
  * @return {Promise}        A Promise that will be resolved whenever the target user replies to
- *                          the prompt in the given Channel. This promise cannot be rejected,
- *                          but it may never be resolved.
+ *                          the prompt in the given Channel. If the user reacts
+ *                          with an negative emoji (-1, thumbsdown), the promise is rejected.
  * @instance
  * @name  ask
  * @memberOf User
@@ -168,6 +168,7 @@ userSchema.methods.unsetRole = function(role) {
  * @name  updateSocialNetworkHandle
  * @memberOf User
  * @method
+ * @since  2.1
  */
 userSchema.methods.updateSocialNetworkHandle = function(name, value) {
     var aData = {
@@ -191,6 +192,7 @@ userSchema.methods.updateSocialNetworkHandle = function(name, value) {
  * @name  getSocialNetworkHandle
  * @memberOf User
  * @method
+ * @since  2.1
  */
 userSchema.methods.getSocialNetworkHandle = function(name) {
     return new Promise((resolve, reject) => {

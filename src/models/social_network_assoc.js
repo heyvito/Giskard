@@ -22,5 +22,6 @@ userNetworkAssocSchema.methods.toString = function() {
  * Represents a stored User association metadata.
  * @constructor
  * @name  UserNetworkAssoc
+ * @since  2.1
  */
 module.exports = mongoose.model('UserNetworkAssocSchema', userNetworkAssocSchema);
