@@ -198,9 +198,18 @@ jspm_packages
 .node_repl_history`;
         return fs.writeFile(Path.join(targetModule, `.gitignore`), file);
       })
+      .then(() => {
+        npmlog.info('NewModule', 'Bootstrapping a Readme file...');
+        var file = `# ${answers.repo_name}
+> ${answers.desc}
+
+[Describe here how to install your module, and how to use it]
+`;
+        return fs.writeFile(Path.join(targetModule, `README.md`), file);
+      })
       .then(() => npmlog.info('NewModule', 'Initialising git repository...'))
       .then(() => Git.Repository.init(targetModule, 0))
-      .then(() => npmlog.info('NewModule', 'Done! Happy hacking!'))
+      .then(() => npmlog.info('NewModule', 'Done! Happy hacking!\n\nDON\'T FORGET TO UPDATE YOUR README.MD!'))
       .catch(ex => npmlog.error('NewModule', ex));
 })
 .catch(ex => npmlog.error('NewModule', ex));
