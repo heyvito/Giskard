@@ -14,7 +14,7 @@ var userNetworkAssocSchema = mongoose.Schema({
  * @memberOf UserNetworkAssoc
  * @method
  */
-userAssocSchema.methods.toString = function() {
+userNetworkAssocSchema.methods.toString = function() {
     return `[Giskard::Models::userNetworkAssocSchema <[User ${this.userId}] ${this.name}: ${this.value}>]`;
 }
 
@@ -23,4 +23,4 @@ userAssocSchema.methods.toString = function() {
  * @constructor
  * @name  UserNetworkAssoc
  */
-module.exports = mongoose.model('UserNetworkAssocSchema', userAssocSchema);
+module.exports = mongoose.model('UserNetworkAssocSchema', userNetworkAssocSchema);
