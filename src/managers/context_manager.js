@@ -166,7 +166,8 @@ ContextManager.prototype = {
                     user: typeof user === 'string' ? user : user.id,
                     channel: typeof channel === 'string' ? channel : channel.id,
                     resolve: resolve,
-                    reject: reject
+                    reject: reject,
+                    extra: extra
                 });
             });
         });

@@ -116,7 +116,8 @@ userSchema.methods.updateLastSeen = function() {
  * @method
  */
 userSchema.methods.ask = function(message, type) {
-    var args = [message, this, bot.adapter.dmForUser(this.id), type];
+    var extra = Array.prototype.slice.apply(arguments, []).slice(2),
+        args = [message, this, bot.adapter.dmForUser(this.id), type].concat(extra);
     return bot.contextManager.pushContext.apply(bot.contextManager, args);
 };
 

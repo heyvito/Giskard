@@ -86,6 +86,18 @@ model.BOOLEAN = 2;
  */
 model.REGEX = 3;
 
+/**
+ * Expects an answer that matches a third argument that is a custom Regex object
+ * (This is just an alias to REGEX)
+ * @type {Number}
+ * @field
+ * @readOnly
+ * @name  REGEXP
+ * @memberOf Context
+ * @static
+ */
+model.REGEXP = 3;
+
 var numberComparator = function(value) {
     if(typeof value === 'string') {
         if(/(\d+)/.test(value)) {
