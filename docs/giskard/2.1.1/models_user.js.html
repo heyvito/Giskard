@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: models/user.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: models/user.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var mongoose = require('mongoose'),
+    bot = require('../bot').sharedInstance(),
+    settings = require('./settings').sharedInstance();
+
+var userSchema = mongoose.Schema({
+    id: { type: String, index: { unique: true } },
+    username: { type: String, index: { unique: true } },
+    name: String,
+    deleted: Boolean,
+    lastSeen: Date,
+    presence: String,
+    roles: [String]
+});
+
+/**
+ * Updates a user presence state to a given value.
+ * @param  {String}     newP    New presence state.
+ * @return {undefined}          Nothing.
+ * @instance
+ * @name  updatePresence
+ * @memberOf User
+ * @method
+ */
+userSchema.methods.updatePresence = function(newP) { this.presence = newP; this.save().catch(() => {}); };
+
+/**
+ * Returns the User descrption. Useful during debug.
+ * @return {String}     User description.
+ * @instance
+ * @name  toString
+ * @memberOf User
+ * @method
+ */
+userSchema.methods.toString = function() { return `[Giskard::Models::User &lt;${this.id || 'unknown'}>]`; };
+
+/**
+ * Sends a direct message message to the current User
+ * @param  {String}     message         Message to be sent to the user.
+ * @return {Promise}                    A Promise that will be either resolved or rejected when the
+ *                                      message is sent or fails to be sent.
+ * @instance
+ * @name  send
+ * @memberOf User
+ * @method
+ */
+userSchema.methods.send = function(message) { bot.adapter.contextlessSend(this, message); };
+
+/**
+ * Checks if the current user belongs to a given role.
+ * @param  {String}     role        Role name to be checked.
+ * @return {Boolean}                Whether the user belongs to the given role or not.
+ * @instance
+ * @name  is
+ * @memberOf User
+ * @method
+ */
+userSchema.methods.is = function(role) { return this.roles.some(i => i === role); };
+
+/**
+ * Checks if the current user is a system administrator.
+ * @return {Boolean}        Whether if the current user is an administrator or not.
+ * @instance
+ * @name  isRoot
+ * @memberOf User
+ * @method
+ */
+userSchema.methods.isRoot = function() {
+    return this.is('root') || settings.roots.indexOf(this.username) > -1;
+};
+
+/**
+ * Gets the mention tag for this user.
+ * @return {String}   The mention tag for this user.
+ * @instance
+ * @name  getMentionTag
+ * @memberOf User
+ * @method
+ */
+userSchema.methods.getMentionTag = function() { return bot.adapter.getMentionTagForUser(this); };
+
+/**
+ * Returns whether this user is online or not.
+ * @return {Boolean}        Whether this user is online or not.
+ * @instance
+ * @name  isOnline
+ * @memberOf User
+ * @method
+ */
+userSchema.methods.isOnline = function() { return this.presence !== 'away'; };
+
+/**
+ * Updates the last seen value for this user.
+ * @return {Promise}        A promise that will be resolved after the user is updated.
+ * @instance
+ * @name  updateLastSeen
+ * @memberOf User
+ * @method
+ */
+userSchema.methods.updateLastSeen = function() {
+    this.lastSeen = Date.now();
+    return this.save();
+};
+
+/**
+ * Sends a prompt to the current user.
+ * @param  {String} message Prompt to be sent to the user.
+ * @param  {Number} type    Type of expected answer. Possible values are Context.NUMBER,
+ *                          Context.BOOL, and Context.REGEX. Documentation about those items and
+ *                          how they behave can be found in the `Context` documentation.
+ * @return {Promise}        A Promise that will be resolved whenever the target user replies to
+ *                          the prompt in the given Channel. If the user reacts
+ *                          with an negative emoji (-1, thumbsdown), the promise is rejected.
+ * @instance
+ * @name  ask
+ * @memberOf User
+ * @method
+ */
+userSchema.methods.ask = function(message, type) {
+    var args = [message, this, bot.adapter.dmForUser(this.id), type];
+    return bot.contextManager.pushContext.apply(bot.contextManager, args);
+};
+
+/**
+ * Sets the current user in a given role.
+ * @param {String}  role    Role name.
+ * @return {Promise}        A Promise that will be resolved after the user is successfully updated.
+ * @instance
+ * @name  setRole
+ * @memberOf User
+ * @method
+ */
+userSchema.methods.setRole = function(role) {
+    role = role.toLowerCase();
+    if(this.roles.indexOf(role) > -1) {
+        return Promise.resolve(this);
+    } else {
+        this.roles.push(role);
+        return this.save();
+    }
+};
+
+/**
+ * Removes the current user in a given role.
+ * @param {String}  role    Role name.
+ * @return {Promise}        A Promise that will be resolved after the user is successfully updated.
+ * @instance
+ * @name  usetRole
+ * @memberOf User
+ * @method
+ */
+userSchema.methods.unsetRole = function(role) {
+    var normalisedRole = role.toLowerCase();
+    if(!this.roles.some(i => i.toLowerCase() === normalisedRole)) {
+        return Promise.resolve(this);
+    } else {
+        this.roles.splice(this.roles.map(i => i.toLowerCase()).indexOf(normalisedRole), 1);
+        return this.save();
+    }
+};
+
+/**
+ * Creates or updates a social network association for the given user
+ * @param  {String} name        Name of the social network
+ * @param  {String} value       Value of the association
+ * @return {Promise}            A Promise that will be resolved after the association has been created or
+ *                              updated.
+ * @instance
+ * @name  updateSocialNetworkHandle
+ * @memberOf User
+ * @method
+ * @since  2.1
+ */
+userSchema.methods.updateSocialNetworkHandle = function(name, value) {
+    var aData = {
+        userId: this.id,
+        name: name,
+        value: value
+    };
+    return bot.db.UserSocialNetworkAssoc
+        .findOneAndUpdate({ userId: this.id, name: name }, aData, { new: true, upsert: true })
+        .exec();
+};
+
+/**
+ * Gets a social network association for the given user
+ * @param  {String} name        Name of the social network
+ * @return {Promise}            A Promise that will be resolved in case the
+ *                              association exists. In this case, the promise
+ *                              will be resolved with the association value. Otherwise,
+ *                              the promise will be rejected.
+ * @instance
+ * @name  getSocialNetworkHandle
+ * @memberOf User
+ * @method
+ * @since  2.1
+ */
+userSchema.methods.getSocialNetworkHandle = function(name) {
+    return new Promise((resolve, reject) => {
+        bot.db.UserSocialNetworkAssoc
+            .findOne({ userId: this.id, name: name })
+            .then(d => {
+                if(d) {
+                    resolve(d.value);
+                } else {
+                    reject();
+                }
+            });
+    });
+};
+
+/**
+ * Enumerates all social network associations for this user.
+ * @return {Promise}    A promise that will be resolved as soon as all handles
+ *                      are mapped to a {name, value} array. An empty array will
+ *                      be returned in case the user does not have any handle.
+ * @instance
+ * @name enumerateSocialNetworkHandles
+ * @memberOf User
+ * @method
+ * @since  2.1.1
+ */
+userSchema.methods.enumerateSocialNetworkHandles = function() {
+    return new Promise((resolve, reject) => {
+        bot.db.UserSocialNetworkAssoc
+            .find({ userId: this.id })
+            .then(d => {
+                resolve(d.map(n => ({ name: n.name, value: n.value })))
+            })
+            .catch(ex => reject(ex));
+    });
+};
+
+/**
+ * Creates or updates a user based on incoming Slack payload
+ * @param  {AnyObject} objData Slack payload to be used to create or update the user.
+ * @return {Promise}            A Promise that will be resolved after the user has been created or
+ *                              updated.
+ * @static
+ * @name  fromSlackData
+ * @memberOf User
+ * @method
+ */
+userSchema.statics.fromSlackData = function(objData) {
+
+    // jscs:disable
+    var uData = {
+        id: objData.id,
+        username: objData.name,
+        name: objData.profile.real_name,
+        deleted: objData.deleted,
+        presence: objData.presence
+    };
+
+    // jscs:enable
+    return this
+        .findOneAndUpdate({ id: objData.id }, uData, { new: true, upsert: true })
+        .then((u) => {
+            if(objData.presence !== 'away') {
+                return u.updateLastSeen();
+            } else {
+                return u;
+            }
+        });
+};
+
+/**
+ * Represents a stored User.
+ * @constructor
+ * @name  User
+ */
+module.exports = mongoose.model('User', userSchema);
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Adapters.html">Adapters</a></li><li><a href="ApiManager.html">ApiManager</a></li><li><a href="BaseAdapter.html">BaseAdapter</a></li><li><a href="BaseModule.html">BaseModule</a></li><li><a href="Channel.html">Channel</a></li><li><a href="Context.html">Context</a></li><li><a href="ContextManager.html">ContextManager</a></li><li><a href="Envelope.html">Envelope</a></li><li><a href="InputManager.html">InputManager</a></li><li><a href="InstallationManager.html">InstallationManager</a></li><li><a href="MessageComparator.html">MessageComparator</a></li><li><a href="ModuleManager.html">ModuleManager</a></li><li><a href="ModuleMeta.html">ModuleMeta</a></li><li><a href="Response.html">Response</a></li><li><a href="User.html">User</a></li><li><a href="UserNetworkAssoc.html">UserNetworkAssoc</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Jun 15 2016 13:56:00 GMT-0300 (BRT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
