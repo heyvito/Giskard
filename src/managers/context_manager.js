@@ -38,8 +38,8 @@ ContextManager.prototype = {
      * @return {undefined}                                      Nothing.
      */
     registerContext: function(message) {
-        logger.debug('Registering context: ');
-        logger.debug(message);
+        logger.silly('Registering context: ');
+        logger.silly(message);
         db.Context
             .createWithMessage(message.messageCallback, message.user, message.channel)
             .then(i => {
@@ -128,8 +128,8 @@ ContextManager.prototype = {
      */
     pushContext: function(message, user, channel, type) {
         var extra = Array.prototype.slice.apply(arguments, []).slice(4);
-        logger.debug('Pushing context: ');
-        logger.debug({
+        logger.silly('Pushing context: ');
+        logger.silly({
             message: message,
             user: user,
             channel: channel,
