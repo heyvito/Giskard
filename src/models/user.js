@@ -209,6 +209,28 @@ userSchema.methods.getSocialNetworkHandle = function(name) {
 };
 
 /**
+ * Enumerates all social network associations for this user.
+ * @return {Promise}    A promise that will be resolved as soon as all handles
+ *                      are mapped to a {name, value} array. An empty array will
+ *                      be returned in case the user does not have any handle.
+ * @instance
+ * @name enumerateSocialNetworkHandles
+ * @memberOf User
+ * @method
+ * @since  2.1.1
+ */
+userSchema.methods.enumerateSocialNetworkHandles = function() {
+    return new Promise((resolve, reject) => {
+        bot.db.UserSocialNetworkAssoc
+            .find({ userId: this.id })
+            .then(d => {
+                resolve(d.map(n => ({ name: n.name, value: n.value })))
+            })
+            .catch(ex => reject(ex));
+    });
+};
+
+/**
  * Creates or updates a user based on incoming Slack payload
  * @param  {AnyObject} objData Slack payload to be used to create or update the user.
  * @return {Promise}            A Promise that will be resolved after the user has been created or
