@@ -156,7 +156,55 @@ userSchema.methods.unsetRole = function(role) {
         this.roles.splice(this.roles.map(i => i.toLowerCase()).indexOf(normalisedRole), 1);
         return this.save();
     }
-}
+};
+
+/**
+ * Creates or updates an association for the given user
+ * @param  {String} name        Name of the association
+ * @param  {String} value       Value of the association
+ * @return {Promise}            A Promise that will be resolved after the association has been created or
+ *                              updated.
+ * @instance
+ * @name  updateAssocation
+ * @memberOf User
+ * @method
+ */
+userSchema.methods.updateAssocation = function(name, value) {
+    var aData = {
+        userId: this.id,
+        name: name,
+        value: value
+    };
+    return bot.db.UserAssoc
+        .findOneAndUpdate({ userId: this.id, name: this.name }, aData, { new: true, upsert: true })
+        .exec();
+};
+
+/**
+ * Gets an association for the given user
+ * @param  {String} name        Name of the association
+ * @return {Promise}            A Promise that will be resolved in case the
+ *                              association exists. In this case, the promise
+ *                              will be resolved with the association value. Otherwise,
+ *                              the promise will be rejected.
+ * @instance
+ * @name  getAssociation
+ * @memberOf User
+ * @method
+ */
+userSchema.methods.getAssociation = function(name) {
+    return new Promise((resolve, reject) => {
+        bot.db.UserAssoc
+            .findOne({ userId: this.id, name: name })
+            .then(d => {
+                if(d) {
+                    resolve(d.value);
+                } else {
+                    reject();
+                }
+            });
+    });
+};
 
 /**
  * Creates or updates a user based on incoming Slack payload
