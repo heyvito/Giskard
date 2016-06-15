@@ -5,7 +5,7 @@ var mongoose = require('mongoose'),
     Channel = require('../models/channel'),
     logger = require('./logger')('DatabaseConnector'),
     ModuleMeta = require('../models/module_meta'),
-    UserAssoc = require('../models/user_assoc');
+    UserSocialNetworkAssoc = require('../models/social_network_assoc');
 
 var connected;
 
@@ -14,7 +14,7 @@ module.exports = {
     Context: Context,
     Channel: Channel,
     ModuleMeta: ModuleMeta,
-    UserAssoc: UserAssoc,
+    UserSocialNetworkAssoc: UserSocialNetworkAssoc,
 
     /**
      * Prepares the database connector to run

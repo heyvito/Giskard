@@ -159,42 +159,42 @@ userSchema.methods.unsetRole = function(role) {
 };
 
 /**
- * Creates or updates an association for the given user
- * @param  {String} name        Name of the association
+ * Creates or updates a social network association for the given user
+ * @param  {String} name        Name of the social network
  * @param  {String} value       Value of the association
  * @return {Promise}            A Promise that will be resolved after the association has been created or
  *                              updated.
  * @instance
- * @name  updateAssocation
+ * @name  updateSocialNetworkHandle
  * @memberOf User
  * @method
  */
-userSchema.methods.updateAssocation = function(name, value) {
+userSchema.methods.updateSocialNetworkHandle = function(name, value) {
     var aData = {
         userId: this.id,
         name: name,
         value: value
     };
-    return bot.db.UserAssoc
+    return bot.db.UserSocialNetworkAssoc
         .findOneAndUpdate({ userId: this.id, name: this.name }, aData, { new: true, upsert: true })
         .exec();
 };
 
 /**
- * Gets an association for the given user
- * @param  {String} name        Name of the association
+ * Gets a social network association for the given user
+ * @param  {String} name        Name of the social network
  * @return {Promise}            A Promise that will be resolved in case the
  *                              association exists. In this case, the promise
  *                              will be resolved with the association value. Otherwise,
  *                              the promise will be rejected.
  * @instance
- * @name  getAssociation
+ * @name  getSocialNetworkHandle
  * @memberOf User
  * @method
  */
-userSchema.methods.getAssociation = function(name) {
+userSchema.methods.getSocialNetworkHandle = function(name) {
     return new Promise((resolve, reject) => {
-        bot.db.UserAssoc
+        bot.db.UserSocialNetworkAssoc
             .findOne({ userId: this.id, name: name })
             .then(d => {
                 if(d) {
