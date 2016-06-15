@@ -162,8 +162,10 @@ ModuleManager.prototype = {
         }
         logger.info(`${name}: Unloading...`);
         var basePath = mod.meta.root;
-        logger.info(`${name}: Imploding module instance...`);
-        mod.instance.implode();
+        if(!!mod.instance) {
+            logger.info(`${name}: Imploding module instance...`);
+            mod.instance.implode();
+        }
         logger.info(`${name}: Removing require cache...`);
         Object.keys(require.cache)
             .filter(k => k.startsWith(basePath))
