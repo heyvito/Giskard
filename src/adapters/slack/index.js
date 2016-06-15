@@ -31,6 +31,7 @@ SlackAdapter.prototype = {
                 });
                 this.bot.mentionMarks = [`<@${data.self.id}>`, data.self.name].concat(settings.nicknames);
                 this.bot.name = data.self.name;
+                this.botId = data.self.id;
                 var proms = [];
                 proms = proms.concat(data.channels
                     .filter(c => !c.is_archived)
@@ -77,8 +78,8 @@ SlackAdapter.prototype = {
         if(!this.messageEventSet) {
             this.rtm.on(RTM_EVENTS.REACTION_ADDED, (message) => {
                 try {
-                    if(!message.item.ts || !message.reaction) {
-                        logger.verbose('Ignoring inconsistent REACTION_ADDED event.');
+                    if(!message.item.ts || !message.reaction || (message.user && message.user === this.botId)) {
+                        logger.verbose('Ignoring REACTION_ADDED event.');
                         return;
                     }
                     this.bot.contextManager.handleReactionAdded({
@@ -92,7 +93,7 @@ SlackAdapter.prototype = {
                 }
             });
             this.rtm.on(RTM_EVENTS.MESSAGE, (message) => {
-                if(message.type !== 'message' || !!message.subtype) { return; }
+                if(message.type !== 'message' || !!message.subtype || (message.user && message.user === this.botId)) { return; }
                 if(message.channel[0] === 'D') {
                     message.text = this.bot.name + ': ' + message.text;
                 }
