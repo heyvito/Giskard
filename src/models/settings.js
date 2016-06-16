@@ -14,7 +14,8 @@ var Settings = function() {
         httpServerPort: 2709,
         token: null,
         roots: [],
-        sentryUri: null
+        sentryUri: null,
+        inflectorDictionaryName: 'ptbr'
     };
     this.envAliases = {
         'PORT': 'httpServerPort',

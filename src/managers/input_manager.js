@@ -1,6 +1,7 @@
 var logger = require('../utils/logger')('InputManager'),
     bot = require('../bot').sharedInstance(),
-    MessageComparator = require('../models/message_comparator');
+    MessageComparator = require('../models/message_comparator'),
+    Inflector = require('../utils/inflector');
 
 /**
  * Represents an object capable of handling user input from a chat source, coming from
@@ -37,17 +38,28 @@ InputManager.prototype = {
         if(bot.contextManager.checkMessage(envelope)) {
             return;
         }
-        this.listeners.every((listener) => {
-            try {
-                listener.call(envelope);
-                if(envelope.stopPropagation) {
-                    return false;
-                }
-            } catch(ex) {
+        Inflector.getInstance(envelope.text)
+            .normaliseInput()
+            .catch(ex => {
+                logger.error('Inflection failed: ');
                 logger.error(ex);
-            }
-            return true;
-        });
+                return envelope.text;
+            })
+            .then(i => {
+                logger.silly(`Inflection result: ${i}`);
+                envelope.normalisedText = i;
+                this.listeners.every((listener) => {
+                    try {
+                        listener.call(envelope);
+                        if(envelope.stopPropagation) {
+                            return false;
+                        }
+                    } catch(ex) {
+                        logger.error(ex);
+                    }
+                    return true;
+                });
+            });
     },
 
      /**
