@@ -91,7 +91,6 @@ ModuleManager.prototype = {
                     if(stat.isDirectory()) {
                         return ModuleManager.preloadModule(path);
                     } else {
-                        logger.warning(`DEPRECATED: Module ${f} is using an old module pattern and will not be loaded.`);
                         return Promise.resolve(null);
                     }
                 } catch(ex) {
