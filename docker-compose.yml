@@ -1,13 +1,18 @@
-web:
-  build: .
-  links:
-    - db
-  volumes:
-    - .:/app
-    - /app/node_modules
-  ports:
-    - "2708:2708"
-  env_file:
-    - .env
-db:
-  image: mongo
+version: '2'
+services:
+  db:
+    image: mongo
+    ports:
+      - "27017:27017"
+  web:
+    build: .
+    links:
+      - db
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./bot_modules:/app/bot_modules
+    ports:
+      - "2708:2708"
+    env_file:
+      - .env
