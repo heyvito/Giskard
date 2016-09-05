@@ -6,6 +6,16 @@ var Singleton = require('../utils/singleton'),
 
 var Settings = function() {
     this.rootDir = Path.resolve(Path.join(__dirname, '..', '..'));
+    this.settingsTypes = {
+        mongoUrl: String,
+        adapter: String,
+        nicknames: Array,
+        loggerLevel: String,
+        httpServerPort: Number,
+        token: String,
+        roots: Array,
+        sentryUri: String
+    }
     this.defaultSettings = {
         mongoUrl: 'mongodb://localhost:27017/giskard',
         adapter: 'debug',
@@ -15,10 +25,6 @@ var Settings = function() {
         token: null,
         roots: [],
         sentryUri: null
-    };
-    this.envAliases = {
-        'PORT': 'httpServerPort',
-        'MONGO_URL': 'mongoUrl'
     };
 
     var fileConf = {},
@@ -30,24 +36,40 @@ var Settings = function() {
             fileConf = JSON.parse(file);
         }
     } catch(ex) {
-        logger.error('Error loading settings file: ');
-        logger.error(ex);
-        process.exit(1);
+        logger.debug('Error loading settings file: ');
+        logger.debug(ex);
+        logger.warn('Falling back to enviroment-based configuration.');
     }
 
     _.merge(preConf, this.defaultSettings, fileConf);
-    Object.keys(this.defaultSettings)
-        .forEach(k => {
-            if(process.env[k]) {
-                preConf[k] = process.env[k];
+
+    Object
+        .keys(process.env)
+        .filter(k => k.indexOf('GISKARD_') === 0)
+        .map(k => {
+            var normalisedKey = k.replace('GISKARD_', '')
+                .split('_')
+                .map(c => `${c[0].toUpperCase()}${c.substr(1).toLowerCase()}`)
+                .join('');
+            normalisedKey = `${normalisedKey[0].toLowerCase()}${normalisedKey.substr(1)}`;
+            return [k, normalisedKey];
+        })
+        .forEach(kp => {
+            var envKey = kp[0],
+                giskKey = kp[1],
+                value = process.env[kp[0]],
+                expectedType = this.settingsTypes[giskKey];
+
+            if(expectedType === Array) {
+                value = value.split(',');
+            } else if(expectedType === Number) {
+                value = parseInt(value, 10);
+            }
+
+            if(value !== undefined) {
+                preConf[kp[1]] = value;
             }
         });
-
-    Object.keys(this.envAliases).forEach(k => {
-        if(process.env[k]) {
-            preConf[this.envAliases[k]] = process.env[k];
-        }
-    });
 
     _.merge(this, preConf);
 
