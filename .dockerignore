@@ -1,2 +1,13 @@
+.git
+bot_modules/*
+!bot_modules/.keep
 node_modules/
 docs/
+script/
+.editorconfig
+docker-compose.yml
+Dockerfile
+LICENSE
+README.md
+.gitignore
+Makefile
