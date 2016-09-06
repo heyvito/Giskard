@@ -16,6 +16,7 @@ var BaseModule = function() {
     this.Context = Context;
     this.logger = require('./utils/logger')(this.getModuleName());
     this.cronJobs = [];
+    this.registeredModels = [];
 };
 
 BaseModule.prototype = {
@@ -212,7 +213,10 @@ BaseModule.prototype = {
         }
 
         structure = mongoose.Schema(structure);
-        return mongoose.model(`${this.getModuleName()}__${name}`, structure);
+        var modelName = `${this.getModuleName()}__${name}`,
+            result = mongoose.model(modelName, structure);
+        this.registeredModels.push(modelName);
+        return result;
     },
 
     /**
@@ -331,6 +335,10 @@ BaseModule.prototype = {
         bot.apiManager.purgeRoutesForModuleNamed(this.getModuleName());
         try {
             this.jobs.forEach(j => j.stop());
+        } catch(_ignored) { }
+
+        try {
+            this.registeredModels.forEach(m => { delete mongoose.models[m] });
         } catch(_ignored) { }
     }
 };
