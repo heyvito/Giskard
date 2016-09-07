@@ -79,15 +79,18 @@ ContextManager.prototype = {
 
         if(this.queue.some(comparator)) {
             var items = this.queue.filter(comparator),
-                text = envelope.text + '';
+                text = envelope.text + '',
+                lowerCaseText = text.toLowerCase();
 
-            if(bot.mentionMarks.some(m => envelope.text.toLowerCase().indexOf(m) === 0)) {
-                bot.mentionMarks.forEach(i => { text = text.replace(i, ''); });
-                text = text.trim();
-                if(text.indexOf(':') === 0) {
-                    text = text.replace(':', '').trim();
+            bot.mentionMarks.forEach(m => {
+                if(lowerCaseText.indexOf(m) === 0) {
+                    text = text.replace(m, '').trim();
+                    if(text.indexOf(':') === 0) {
+                        text = text.replace(':', '').trim();
+                    }
+                    lowerCaseText = text.toLowerCase();
                 }
-            }
+            });
 
             items.forEach((item, index) => {
                 if(!result) {
