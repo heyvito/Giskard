@@ -169,6 +169,22 @@ BaseAdapter.prototype = {
     },
 
     /**
+     * Searches for users that belongs to a given role.
+     * @param  {String} role Role name
+     * @return {Promise}      Promise that will be resolved when the search
+     *                        procedure is completed.
+     * @since  2.1.5
+     */
+    searchUsersInRole: function(role) {
+        return new Promise((resolve) => {
+            this.db.User.find({ roles: role })
+            .then((u) => {
+                resolve(u);
+            });
+        });
+    },
+
+    /**
      * Sends a notification to the adapter source indicating that the bot is typing something.
      * @param {Response}   envelope         The object being responded by the bot. Used to identify
      *                                      the target channel.

@@ -325,6 +325,18 @@ BaseModule.prototype = {
     },
 
     /**
+     * Returns an array of users that belongs to the provided
+     * role
+     * @param  {String} role Role name
+     * @return {Promise}      Promise that will be resolved when the search
+     *                        process is complete.
+     * @since 2.1.5
+     */
+    searchUsersInRole: function(role) {
+        return bot.adapter.searchUsersInRole.apply(bot.adapter, arguments);
+    },
+
+    /**
      * Removes all bindings created by this module
      * @return {undefined} Nothing
      * @since 2.0
