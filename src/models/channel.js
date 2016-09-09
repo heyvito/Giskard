@@ -18,15 +18,17 @@ var channelSchema = mongoose.Schema({
 channelSchema.methods.toString = function() { return `[Giskard::Models::Channel <${this.id}>]`; };
 
 /**
- * Sends an message to the current Channel
- * @param  {String}         Message to be sent to the channel.
- * @return {Promise}        A Promise that will be either resolved or rejected when the message is
- *                          sent or fails to be sent.
- * @memberOf Channel
- * @method send
+ * Sends a message to the current Channel
+ * @param  {String}     message         Message to be sent to the channel.
+ * @param  {Array}      [attachments]   An array of attachments to be sent with the message.
+ * @return {Promise}                    A Promise that will be either resolved or rejected when the
+ *                                      message is sent or fails to be sent.
  * @instance
+ * @name  send
+ * @memberOf Channel
+ * @method
  */
-channelSchema.methods.send = function(message) { return bot.adapter.contextlessSend(this, message); };
+channelSchema.methods.send = function(message, attachments) { return bot.adapter.contextlessSend(this, message, attachments); };
 
 /**
  * Creates or updates a Channel on the database based on received Slack data.

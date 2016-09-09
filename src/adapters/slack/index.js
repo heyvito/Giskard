@@ -158,7 +158,15 @@ SlackAdapter.prototype = {
                         resolve(d);
                     });
                 } else {
-                    this.web.chat.postMessage(id, string, { attachments: attachments }, (e, d) => {
+                    var data = {
+                        username: this.bot.name,
+                        as_user: true,
+                        attachments: attachments
+                    };
+                    this.web.chat.postMessage(id, string, data, (e, d) => {
+                        if(e) {
+                            console.error(e);
+                        }
                         if(d) {
                             resolve(d);
                         }

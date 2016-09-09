@@ -34,8 +34,9 @@ userSchema.methods.updatePresence = function(newP) { this.presence = newP; this.
 userSchema.methods.toString = function() { return `[Giskard::Models::User <${this.id || 'unknown'}>]`; };
 
 /**
- * Sends a direct message message to the current User
+ * Sends a direct message to the current User
  * @param  {String}     message         Message to be sent to the user.
+ * @param  {Array}      [attachments]   An array of attachments to be sent with the message.
  * @return {Promise}                    A Promise that will be either resolved or rejected when the
  *                                      message is sent or fails to be sent.
  * @instance
@@ -43,7 +44,7 @@ userSchema.methods.toString = function() { return `[Giskard::Models::User <${thi
  * @memberOf User
  * @method
  */
-userSchema.methods.send = function(message) { bot.adapter.contextlessSend(this, message); };
+userSchema.methods.send = function(message, attachments) { return bot.adapter.contextlessSend(this, message, attachments); };
 
 /**
  * Checks if the current user belongs to a given role.
