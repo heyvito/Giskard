@@ -18,7 +18,7 @@ WORKDIR $APP_HOME
 
 ADD package.json $APP_HOME
 
-RUN npm install
+RUN npm install --production
 
 COPY . $APP_HOME
 
