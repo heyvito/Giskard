@@ -1,4 +1,5 @@
 var express = require('express'),
+    bodyParser = require('body-parser'),
     settings = require('../models/settings').sharedInstance(),
     logger = require('../utils/logger')('ApiManager');
 
@@ -10,6 +11,8 @@ var ApiManager = function() {
     this.port = settings.httpServerPort;
     logger.info(`Initialised with port: ${this.port}`);
     this.server = express();
+    this.server.use(bodyParser.urlencoded({ extended: false }))
+    this.server.use(bodyParser.json())
     this.router = undefined;
     this.server.use((req, res, next) => this.router(req, res, next));
     this.routes = {};

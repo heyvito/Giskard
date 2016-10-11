@@ -1,6 +1,6 @@
 {
   "name": "giskard",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "",
   "main": "src/index.js",
   "private": true,
@@ -17,6 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@slack/client": "https://github.com/slackhq/node-slack-client.git",
+    "body-parser": "^1.15.2",
     "chalk": "^1.1.1",
     "cline": "^0.8.2",
     "commander": "^2.9.0",
